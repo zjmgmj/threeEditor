@@ -1,0 +1,44 @@
+{
+  "id": "2302477",
+  "name": "threeEditor",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14401670",
+      "name": "copy",
+      "font_class": "copy",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
+      "icon_id": "12234017",
+      "name": "删除",
+      "font_class": "delete",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "19151764",
+      "name": "rotate",
+      "font_class": "rotate",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "19151765",
+      "name": "scale",
+      "font_class": "scale",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "19151769",
+      "name": "translate",
+      "font_class": "translate",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    }
+  ]
+}
