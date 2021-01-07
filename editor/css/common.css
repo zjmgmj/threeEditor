@@ -1,0 +1,70 @@
+.row{
+  display: flex;
+}
+.col{
+  flex: 1;
+}
+.tool-panel{
+  position: absolute;
+  bottom: 30px;
+  background: rgba(0,0,0, 0.5);
+  display: flex;
+  width: 250px;
+  z-index: 2;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  border-radius: 3px;
+  text-align: center;
+}
+.tool-panel .iconfont{
+  font-size: 35px;
+  box-sizing: border-box;
+  padding: 7px 10px;
+  cursor: pointer;
+  position: relative;
+}
+.tool-panel .toolbar label{
+  position: absolute;
+  display: none;
+  top: -30px;
+  padding: 5px;
+  border-radius: 2px;
+  font-size: 13px;
+  /* width: 100px; */
+  left: 0;
+  right: 0;
+  /* transform: translateX(-50%); */
+  background: rgba(0,0,0,0.5);
+  text-align: center;
+}
+.tool-panel .toolbar:hover label{
+  display: block;
+}
+
+.spot{
+  width: 5px;
+  height: 5px;
+  border: 2px solid #fff;
+  background: #009bff;
+  border-radius: 100%;
+}
+.spot .del-spot{
+  width: 50px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  padding: 3px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  display: none;
+}
+.spot:hover .del-spot{
+  display: block;
+}
+.label{
+  padding: 5px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}

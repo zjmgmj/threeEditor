@@ -2,169 +2,83 @@ import * as THREE from "../build/three.module.js"; // 引用基本的three.js库
 
 import { Editor } from "./js/Editor.js";
 import { Viewport } from "./js/Viewport.js"; // 中心视图
-// import { Toolbar } from "./js/Toolbar.js"; // 左上角的 移动旋转按钮面板
-import { Script } from "./js/Script.js"; // 脚本编辑器界面
-import { Player } from "./js/Player.js"; // 启动演示界面
-import { Sidebar } from "./js/Sidebar.js"; // 右边工具栏
+import { SidebarProject } from "./js/Sidebar.Project.js";
 import { Menubar } from "./js/Menubar.js"; // 顶部菜单
 import { Resizer } from "./js/Resizer.js";
-import { VRButton } from "../examples/jsm/webxr/VRButton.js";
+// import { VRButton } from "../examples/jsm/webxr/VRButton.js";
 
-window.URL = window.URL || window.webkitURL;
-window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+import { Tool } from "./js/tool/index.js";
 
-Number.prototype.format = function () {
-	return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-};
+function Index() {
+	window.URL = window.URL || window.webkitURL;
+	window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
-//
+	Number.prototype.format = function () {
+		return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+	};
 
-var editor = new Editor();
+	var editor = new Editor();
 
-window.editor = editor; // Expose editor to Console
-window.THREE = THREE; // Expose THREE to APP Scripts and Console
-window.VRButton = VRButton; // Expose VRButton to APP Scripts
+	window.editor = editor; // Expose editor to Console
+	window.THREE = THREE; // Expose THREE to APP Scripts and Console
 
-var viewport = new Viewport(editor);
-console.log(viewport);
-document.body.appendChild(viewport.dom);
+	const config = {
+		sidebar: false,
+		labelRenderer: true,
+	};
+	const viewport = new Viewport(editor, config);
+	console.log(viewport);
+	document.body.appendChild(viewport.container.dom);
 
-// var toolbar = new Toolbar(editor);
-// document.body.appendChild(toolbar.dom);
+	const sidebarProject = new SidebarProject(editor);
+	console.log("sidebarProject", sidebarProject);
 
-var script = new Script(editor);
-document.body.appendChild(script.dom);
+	const menubar = new Menubar(editor); // 顶部菜单
+	document.body.appendChild(menubar.dom);
 
-var player = new Player(editor);
-document.body.appendChild(player.dom);
+	const resizer = new Resizer(editor);
+	document.body.appendChild(resizer.dom);
 
-var sidebar = new Sidebar(editor);
-document.body.appendChild(sidebar.dom);
+	const toolBar = new Tool(editor); // 底部工具栏
 
-var menubar = new Menubar(editor);
-document.body.appendChild(menubar.dom);
+	function onWindowResize() {
+		editor.signals.windowResize.dispatch();
+	}
+	window.addEventListener("resize", onWindowResize, false);
+	onWindowResize();
 
-var resizer = new Resizer(editor);
-document.body.appendChild(resizer.dom);
-
-//
-
-editor.storage.init(function () {
-	editor.storage.get(function (state) {
-		if (isLoadingFromHash) return;
-
-		if (state !== undefined) {
-			editor.fromJSON(state);
-		}
-
-		var selected = editor.config.getKey("selected");
-
-		if (selected !== undefined) {
-			editor.selectByUuid(selected);
-		}
+	$(".toolbar").on("click", function (e) {
+		const flag = this.getAttribute("data-flag");
+		tool(flag, e);
 	});
-
-	//
-
-	var timeout;
-
-	function saveState() {
-		// 自动保存
-
-		if (editor.config.getKey("autosave") === false) {
-			return;
-		}
-
-		clearTimeout(timeout);
-
-		timeout = setTimeout(function () {
-			editor.signals.savingStarted.dispatch();
-
-			timeout = setTimeout(function () {
-				editor.storage.set(editor.toJSON());
-
-				editor.signals.savingFinished.dispatch();
-			}, 100);
-		}, 1000);
-	}
-
-	var signals = editor.signals;
-	// 操作下列完成 自动执行saveState方法
-	signals.geometryChanged.add(saveState);
-	signals.objectAdded.add(saveState);
-	signals.objectChanged.add(saveState);
-	signals.objectRemoved.add(saveState);
-	signals.materialChanged.add(saveState);
-	signals.sceneBackgroundChanged.add(saveState);
-	signals.sceneFogChanged.add(saveState);
-	signals.sceneGraphChanged.add(saveState);
-	signals.scriptChanged.add(saveState);
-	signals.historyChanged.add(saveState);
-});
-
-//
-
-document.addEventListener(
-	"dragover",
-	function (event) {
-		console.log("dragover");
-		event.preventDefault();
-		event.dataTransfer.dropEffect = "copy";
-	},
-	false
-);
-
-document.addEventListener(
-	"drop",
-	function (event) {
-		console.log("drop");
-		event.preventDefault();
-
-		if (event.dataTransfer.types[0] === "text/plain") return; // Outliner drop
-
-		if (event.dataTransfer.items) {
-			// DataTransferItemList supports folders
-
-			editor.loader.loadItemList(event.dataTransfer.items);
-		} else {
-			editor.loader.loadFiles(event.dataTransfer.files);
-		}
-	},
-	false
-);
-
-function onWindowResize() {
-	editor.signals.windowResize.dispatch();
-}
-
-window.addEventListener("resize", onWindowResize, false);
-
-onWindowResize();
-
-//
-
-var isLoadingFromHash = false;
-var hash = window.location.hash;
-
-if (hash.substr(1, 5) === "file=") {
-	var file = hash.substr(6);
-
-	if (confirm("Any unsaved data will be lost. Are you sure?")) {
-		var loader = new THREE.FileLoader();
-		loader.crossOrigin = "";
-		loader.load(file, function (text) {
-			editor.clear();
-			editor.fromJSON(JSON.parse(text));
+	function ranging(e) {
+		// 测距
+		const dom = document.getElementById("viewport");
+		const postition = toolBar.base.screenToWorld({
+			dom,
+			x: e.clientX,
+			z: e.clientY,
+			editor,
 		});
-
-		isLoadingFromHash = true;
+		toolBar.ranging.start(postition, () => {
+			dom.removeEventListener("click", ranging);
+		});
+	}
+	function tool(flag) {
+		const dom = document.getElementById("viewport");
+		switch (flag) {
+			case "1":
+				// 测距
+				dom.addEventListener("click", ranging);
+				break;
+			case "2":
+				// 视角切换
+				new toolBar.LockControl(editor, viewport);
+				break;
+			default:
+				console.log("----------", flag);
+				break;
+		}
 	}
 }
-
-// ServiceWorker
-
-// if ("serviceWorker" in navigator) {
-// 	try {
-// 		navigator.serviceWorker.register("sw.js");
-// 	} catch (error) {}
-// }
+Index();

@@ -5,7 +5,7 @@ import { TransformControls } from "../../examples/jsm/controls/TransformControls
 import { UIPanel } from "./libs/ui.js";
 
 import { EditorControls } from "./EditorControls.js";
-
+import { PointerLockControls } from "../../examples/jsm/controls/PointerLockControls.js";
 import { ViewportCamera } from "./Viewport.Camera.js";
 import { ViewportInfo } from "./Viewport.Info.js";
 import { ViewHelper } from "./Viewport.ViewHelper.js";
@@ -14,19 +14,26 @@ import { SetPositionCommand } from "./commands/SetPositionCommand.js";
 import { SetRotationCommand } from "./commands/SetRotationCommand.js";
 import { SetScaleCommand } from "./commands/SetScaleCommand.js";
 import { Toolbar } from "./Toolbar.js"; // 左上角的 移动旋转按钮面板
-function Viewport(editor) {
+import { CSS2DRenderer } from "../../examples/jsm/renderers/CSS2DRenderer.js";
+
+function Viewport(
+	editor,
+	config = { sidebar: false, transformControlsShow: false, optionPanel: false, labelRenderer: false }
+) {
+	const _self = this;
 	var signals = editor.signals;
 
 	var container = new UIPanel();
 	container.setId("viewport");
 	container.setPosition("absolute");
 
-	container.add(new ViewportCamera(editor)); // 场景中添加相机 右上角相机切换
+	// container.add(new ViewportCamera(editor)); // 场景中添加相机 右上角相机切换
 	container.add(new ViewportInfo(editor)); // 场景左下角显示信息
-
+	let screenDom = container.dom;
 	//
 
 	var renderer = null;
+	var labelRenderer = null;
 	var pmremGenerator = null;
 	var pmremTexture = null;
 
@@ -40,6 +47,7 @@ function Viewport(editor) {
 	// helpers
 
 	var grid = new THREE.GridHelper(1000, 500, 0x444444, 0x888888); // 网格
+	grid.position.set(0, -0.5, 0);
 	var viewHelper = new ViewHelper(camera, container); // 右下角 坐标控件
 
 	//
@@ -57,73 +65,78 @@ function Viewport(editor) {
 	var objectRotationOnDown = null;
 	var objectScaleOnDown = null;
 
-	var transformControls = new TransformControls(camera, container.dom);
-	transformControls.addEventListener("change", function () {
-		// 监听场景 控制器对模型操作
-		console.log("transformControls----change");
-		var object = transformControls.object;
+	if (config.transformControlsShow) {
+		var transformControls = new TransformControls(camera, container.dom);
+		transformControls.addEventListener("change", function () {
+			// 监听场景 控制器对模型操作
+			console.log("transformControls----change");
+			var object = transformControls.object;
 
-		if (object !== undefined) {
-			selectionBox.setFromObject(object);
+			if (object !== undefined) {
+				selectionBox.setFromObject(object);
 
-			var helper = editor.helpers[object.id];
+				var helper = editor.helpers[object.id];
 
-			if (helper !== undefined && helper.isSkeletonHelper !== true) {
-				helper.update();
+				if (helper !== undefined && helper.isSkeletonHelper !== true) {
+					helper.update();
+				}
+
+				if (config.sidebar) signals.refreshSidebarObject3D.dispatch(object); // 更新侧边栏模型信息
 			}
 
-			signals.refreshSidebarObject3D.dispatch(object); // 更新侧边栏模型信息
-		}
+			render();
+		});
+		transformControls.addEventListener("mouseDown", function () {
+			// 监听鼠标对 控制器操作
+			console.log("transformControls----mouseDown");
+			toggleOptionPanel();
+			var object = transformControls.object;
 
-		render();
-	});
-	transformControls.addEventListener("mouseDown", function () {
-		// 监听鼠标对 控制器操作
-		console.log("transformControls----mouseDown");
-		toggleOptionPanel();
-		var object = transformControls.object;
+			objectPositionOnDown = object.position.clone();
+			objectRotationOnDown = object.rotation.clone();
+			objectScaleOnDown = object.scale.clone();
 
-		objectPositionOnDown = object.position.clone();
-		objectRotationOnDown = object.rotation.clone();
-		objectScaleOnDown = object.scale.clone();
+			controls.enabled = false;
+		});
+		transformControls.addEventListener("mouseUp", function () {
+			// 监听鼠标对 控制器操作
+			console.log("transformControls------------mouseUp");
+			var object = transformControls.object;
 
-		controls.enabled = false;
-	});
-	transformControls.addEventListener("mouseUp", function () {
-		// 监听鼠标对 控制器操作
-		console.log("transformControls------------mouseUp");
-		var object = transformControls.object;
+			if (object !== undefined) {
+				// 操作模式
+				switch (transformControls.getMode()) {
+					case "translate":
+						if (!objectPositionOnDown.equals(object.position)) {
+							editor.execute(
+								new SetPositionCommand(editor, object, object.position, objectPositionOnDown)
+							);
+						}
 
-		if (object !== undefined) {
-			// 操作模式
-			switch (transformControls.getMode()) {
-				case "translate":
-					if (!objectPositionOnDown.equals(object.position)) {
-						editor.execute(new SetPositionCommand(editor, object, object.position, objectPositionOnDown));
-					}
+						break;
 
-					break;
+					case "rotate":
+						if (!objectRotationOnDown.equals(object.rotation)) {
+							editor.execute(
+								new SetRotationCommand(editor, object, object.rotation, objectRotationOnDown)
+							);
+						}
 
-				case "rotate":
-					if (!objectRotationOnDown.equals(object.rotation)) {
-						editor.execute(new SetRotationCommand(editor, object, object.rotation, objectRotationOnDown));
-					}
+						break;
 
-					break;
+					case "scale":
+						if (!objectScaleOnDown.equals(object.scale)) {
+							editor.execute(new SetScaleCommand(editor, object, object.scale, objectScaleOnDown));
+						}
 
-				case "scale":
-					if (!objectScaleOnDown.equals(object.scale)) {
-						editor.execute(new SetScaleCommand(editor, object, object.scale, objectScaleOnDown));
-					}
-
-					break;
+						break;
+				}
 			}
-		}
 
-		controls.enabled = true;
-	});
-
-	sceneHelpers.add(transformControls); // 场景中加入转换控件
+			controls.enabled = true;
+		});
+		sceneHelpers.add(transformControls); // 场景中加入转换控件
+	}
 
 	// object picking
 
@@ -141,7 +154,6 @@ function Viewport(editor) {
 	function getIntersects(point, objects) {
 		// 获取鼠标选择中的模型
 		mouse.set(point.x * 2 - 1, -(point.y * 2) + 1);
-
 		raycaster.setFromCamera(mouse, camera);
 
 		return raycaster.intersectObjects(objects);
@@ -234,6 +246,7 @@ function Viewport(editor) {
 	}
 	function toggleOptionPanel(type) {
 		// 显示操作面板
+		if (!config.optionPanel || !config.transformControlsShow) return false;
 		const dom = document.getElementById("toolbar");
 		if (!type && !dom) return false;
 		if (!type && dom) {
@@ -269,13 +282,23 @@ function Viewport(editor) {
 
 	// controls need to be added *after* main logic,
 	// otherwise controls.enabled doesn't work.
-
+	// CSS2DRenderer
 	var controls = new EditorControls(camera, container.dom);
+	if (config.labelRenderer) {
+		labelRenderer = new CSS2DRenderer();
+		labelRenderer.setSize(container.dom.offsetWidth, container.dom.offsetHeight);
+		labelRenderer.domElement.style.position = "absolute";
+		labelRenderer.domElement.style.top = "0px";
+		container.dom.appendChild(labelRenderer.domElement);
+		controls = new EditorControls(camera, labelRenderer.domElement);
+		screenDom = labelRenderer.domElement;
+	}
 	controls.addEventListener("change", function () {
 		console.log("controls---change");
 		toggleOptionPanel();
+
 		signals.cameraChanged.dispatch(camera);
-		signals.refreshSidebarObject3D.dispatch(camera);
+		if (config.sidebar) signals.refreshSidebarObject3D.dispatch(camera);
 	});
 	viewHelper.controls = controls;
 
@@ -286,22 +309,23 @@ function Viewport(editor) {
 		controls.center.set(0, 0, 0);
 		render();
 	});
+	if (transformControls) {
+		signals.transformModeChanged.add(function (mode) {
+			console.log("切换操作模式", mode);
+			transformControls.setMode(mode);
+		});
 
-	signals.transformModeChanged.add(function (mode) {
-		console.log("切换操作模式", mode);
-		transformControls.setMode(mode);
-	});
+		signals.snapChanged.add(function (dist) {
+			console.log("snapChanged", dist);
+			transformControls.setTranslationSnap(dist);
+		});
 
-	signals.snapChanged.add(function (dist) {
-		console.log("snapChanged", dist);
-		transformControls.setTranslationSnap(dist);
-	});
-
-	signals.spaceChanged.add(function (space) {
-		// 坐标变换
-		console.log("坐标变换", space);
-		transformControls.setSpace(space);
-	});
+		signals.spaceChanged.add(function (space) {
+			// 坐标变换
+			console.log("坐标变换", space);
+			transformControls.setSpace(space);
+		});
+	}
 
 	signals.rendererUpdated.add(function () {
 		console.log("rendererUpdated");
@@ -365,7 +389,7 @@ function Viewport(editor) {
 		// 模型选择
 		console.log("模型选择", object);
 		selectionBox.visible = false;
-		transformControls.detach();
+		if (transformControls) transformControls.detach();
 
 		if (object !== null && object !== scene && object !== camera) {
 			box.setFromObject(object);
@@ -375,7 +399,7 @@ function Viewport(editor) {
 				selectionBox.visible = true;
 			}
 
-			transformControls.attach(object);
+			if (transformControls) transformControls.attach(object);
 			toggleOptionPanel("show");
 		} else {
 			toggleOptionPanel();
@@ -425,7 +449,7 @@ function Viewport(editor) {
 		// 删除模型
 		console.log("删除模型", object);
 		controls.enabled = true; // see #14180
-		if (object === transformControls.object) {
+		if (object === transformControls?.object) {
 			transformControls.detach();
 		}
 
@@ -591,6 +615,7 @@ function Viewport(editor) {
 		updateAspectRatio();
 
 		renderer.setSize(container.dom.offsetWidth, container.dom.offsetHeight);
+		if (labelRenderer) labelRenderer.setSize(container.dom.offsetWidth, container.dom.offsetHeight);
 
 		render();
 	});
@@ -613,9 +638,12 @@ function Viewport(editor) {
 
 	var clock = new THREE.Clock(); // only used for animations
 
-	function animate() {
-		requestAnimationFrame(animate);
-
+	// function animate() {
+	// 	// renderControl();
+	// 	// render();
+	// }
+	this.animate = function () {
+		requestAnimationFrame(_self.animate);
 		var mixer = editor.mixer;
 		var delta = clock.getDelta();
 
@@ -630,27 +658,28 @@ function Viewport(editor) {
 			viewHelper.update(delta);
 			needsUpdate = true;
 		}
-
+		console.log("needsUpdate", needsUpdate);
 		if (needsUpdate === true) render();
-	}
-
-	requestAnimationFrame(animate);
+	};
+	requestAnimationFrame(_self.animate);
 
 	//
 
 	var startTime = 0;
 	var endTime = 0;
-
+	scene.add(grid);
 	function render() {
 		startTime = performance.now();
 
 		// Adding/removing grid to scene so materials with depthWrite false
 		// don't render under the grid.
 
-		scene.add(grid);
 		renderer.setViewport(0, 0, container.dom.offsetWidth, container.dom.offsetHeight);
 		renderer.render(scene, editor.viewportCamera);
-		scene.remove(grid);
+
+		if (labelRenderer) labelRenderer.render(scene, editor.viewportCamera);
+
+		// scene.remove(grid);
 
 		if (camera === editor.viewportCamera) {
 			renderer.autoClear = false;
@@ -662,8 +691,8 @@ function Viewport(editor) {
 		endTime = performance.now();
 		editor.signals.sceneRendered.dispatch(endTime - startTime);
 	}
-
-	return container;
+	this.controls = controls;
+	return { container, screenDom, render, prototype: this };
 }
 
 function updateGridColors(grid, colors) {

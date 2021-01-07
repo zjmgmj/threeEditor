@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "18494348",
+      "name": "人眼视角",
+      "font_class": "FirstPerson",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "9512629",
+      "name": "尺子",
+      "font_class": "ruler",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
       "icon_id": "14401670",
       "name": "copy",
       "font_class": "copy",
