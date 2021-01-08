@@ -316,7 +316,6 @@ Editor.prototype = {
 		var material = new THREE.MeshBasicMaterial({ color: 0xff0000, visible: false });
 
 		return function (object, helper) {
-			debugger;
 			if (helper === undefined) {
 				if (object.isCamera) {
 					helper = new THREE.CameraHelper(object);

@@ -23,12 +23,12 @@ function Ranging(editor) {
 			group.name = `测距${i}`;
 			editor.addObject(group);
 		}
-		// draw.rangingSpot({ position, parent: group, name: spotName });
+		// position.y += 1;
 		const isSpot = group.getObjectByName(spotName);
 		if (!isSpot) draw.rangingSpot({ position, parent: group, name: spotName });
 		if (lineStartPoint) {
 			const oldLine = group.getObjectByName(lineName);
-			oldLine.geometry.vertices[oldLine.geometry.vertices.length - 1].copy(position);
+			oldLine.geometry.setPoints([lineStartPoint, position]);
 			document.removeEventListener("mousemove", updateLine);
 			lineNum++;
 			lineStartPoint = null;
@@ -59,10 +59,10 @@ function Ranging(editor) {
 		document.removeEventListener("contextmenu", end);
 		_self.callback();
 	}
-	function getCenterPoint(vertices) {
-		const x = (vertices[0].x + vertices[1].x) / 2;
-		const y = (vertices[0].y + vertices[1].y) / 2;
-		const z = (vertices[0].z + vertices[1].z) / 2;
+	function getCenterPoint(start, end) {
+		const x = (start.x + end.x) / 2;
+		const y = (start.y + end.y) / 2;
+		const z = (start.z + end.z) / 2;
 		return new THREE.Vector3(x, y, z);
 	}
 	function updateLine(e) {
@@ -74,15 +74,13 @@ function Ranging(editor) {
 		});
 		const oldLine = group.getObjectByName(lineName);
 		if (oldLine) {
-			oldLine.geometry.vertices[oldLine.geometry.vertices.length - 1].copy(point);
-			oldLine.geometry.verticesNeedUpdate = true;
-			editor.signals.sceneGraphChanged.dispatch();
+			oldLine.geometry.setPoints([lineStartPoint, point]);
 			const distance = lineStartPoint.distanceTo(point).toFixed(2);
 			draw.removeLabel({ name: labelName, parent: group });
-			const centerPoint = getCenterPoint(oldLine.geometry.vertices);
+			const centerPoint = getCenterPoint(lineStartPoint, point);
 			draw.createLabel({ parent: group, content: `${distance}mm`, position: centerPoint, name: labelName });
 		} else {
-			draw.line({ vertices: [lineStartPoint, point], name: lineName, parent: group });
+			draw.createLine({ vertices: [lineStartPoint, point], name: lineName, parent: group });
 		}
 	}
 	return this;

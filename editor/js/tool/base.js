@@ -29,7 +29,9 @@ function screenToWorld({ dom, x, z, editor, targetY = 0 }) {
 	const onDownPosition = new THREE.Vector2();
 	const array = getMousePosition(dom, x, z);
 	onDownPosition.fromArray(array);
-	const intersects = getIntersects({ point: onDownPosition, objects: scene.children, camera });
+	const objects = getSceneObjects(scene.children);
+	console.log("-----------objects", objects);
+	const intersects = getIntersects({ point: onDownPosition, objects, camera });
 	if (intersects.length > 0) {
 		pos.copy(intersects[0].point);
 	} else {
@@ -60,6 +62,20 @@ function createLabel({ content, className, editor, position, dom, parent, name }
 	label.name = name;
 	editor.addObject(label, parent);
 	// scene.dispose();
+}
+
+function getSceneObjects(group) {
+	// const sceneModels = scene.children
+	const objects = [];
+	// const models = group;
+	for (let i = 0; i < group.length; i++) {
+		if (group[i].constructor.name === "Mesh") {
+			objects.push(group[i]);
+		} else {
+			objects.push(...getSceneObjects(group[i].children));
+		}
+	}
+	return objects;
 }
 
 export default { screenToWorld, createLabel };

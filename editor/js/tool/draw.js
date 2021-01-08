@@ -1,8 +1,33 @@
 import * as THREE from "../../../build/three.module.js"; // 引用基本的three.js库
+import THREEMeshLine from "../../../build/THREEMeshLine.js";
 import base from "./base.js";
+const { MeshLine, MeshLineMaterial } = new THREEMeshLine(THREE);
 function Draw(editor) {
 	// Object.assign(this, base);
 	const _self = this;
+	function createLine({ vertices, color, pointNum = 1, name, parent }) {
+		var geometry = new THREE.Geometry();
+		geometry.vertices = vertices;
+		color = color || 0x009bff;
+		var material = new MeshLineMaterial({
+			side: THREE.DoubleSide,
+			useMap: false,
+			color: new THREE.Color(color),
+			opacity: 1,
+			resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
+			sizeAttenuation: false,
+			lineWidth: 5,
+			depthTest: false,
+		});
+		const meshLine = new MeshLine();
+		meshLine.setGeometry(geometry);
+
+		const lineModal = new THREE.Mesh(meshLine.geometry, material);
+		lineModal.name = name;
+
+		editor.addObject(lineModal, parent);
+		// return lineModal
+	}
 	function line({ color = 0x009bff, vertices, name, parent }) {
 		// 直线
 		const material = new THREE.LineBasicMaterial({ color });
@@ -70,7 +95,7 @@ function Draw(editor) {
 		// 	if (spotModel) editor.removeObject(spotModel, parent);
 		// }
 	}
-	function createLabel({ position, parent, content, name }) {
+	function createLabel({ position = new THREE.Vector3(0, 0, 0), parent, content, name }) {
 		const dom = document.createElement("div");
 		dom.className = "label";
 		dom.textContent = content;
@@ -87,6 +112,6 @@ function Draw(editor) {
 		const model = parent.getObjectByName(name);
 		if (model) editor.removeObject(model);
 	}
-	return { line, rangingSpot, createLabel, removeLabel };
+	return { line, rangingSpot, createLabel, removeLabel, createLine };
 }
 export default Draw;

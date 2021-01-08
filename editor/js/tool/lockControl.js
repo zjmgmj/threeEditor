@@ -3,9 +3,9 @@ import { PointerLockControls } from "../../../examples/jsm/controls/PointerLockC
 function LockControls(editor, viewport) {
 	// -------------------
 	const _self = this;
-	let { screenDom, render } = viewport;
+	let { container, render } = viewport;
 	const scene = editor.scene;
-	const dom = screenDom;
+	const dom = container.dom;
 	const animate = viewport.prototype.animate;
 	const controls = viewport.prototype.controls;
 	let pointerLockControls;
@@ -38,7 +38,6 @@ function LockControls(editor, viewport) {
 	}
 	initControls();
 	initPointerLock();
-	debugger;
 	viewport.prototype.controls = pointerLockControls;
 	viewport.prototype.animate = () => {
 		requestAnimationFrame(viewport.prototype.animate);

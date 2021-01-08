@@ -5,7 +5,6 @@ import { TransformControls } from "../../examples/jsm/controls/TransformControls
 import { UIPanel } from "./libs/ui.js";
 
 import { EditorControls } from "./EditorControls.js";
-import { PointerLockControls } from "../../examples/jsm/controls/PointerLockControls.js";
 import { ViewportCamera } from "./Viewport.Camera.js";
 import { ViewportInfo } from "./Viewport.Info.js";
 import { ViewHelper } from "./Viewport.ViewHelper.js";
@@ -15,7 +14,7 @@ import { SetRotationCommand } from "./commands/SetRotationCommand.js";
 import { SetScaleCommand } from "./commands/SetScaleCommand.js";
 import { Toolbar } from "./Toolbar.js"; // 左上角的 移动旋转按钮面板
 import { CSS2DRenderer } from "../../examples/jsm/renderers/CSS2DRenderer.js";
-
+import BoxHelper from "./tool/boxHelper.js";
 function Viewport(
 	editor,
 	config = { sidebar: false, transformControlsShow: false, optionPanel: false, labelRenderer: false }
@@ -29,7 +28,7 @@ function Viewport(
 
 	// container.add(new ViewportCamera(editor)); // 场景中添加相机 右上角相机切换
 	container.add(new ViewportInfo(editor)); // 场景左下角显示信息
-	let screenDom = container.dom;
+	// let  = container.dom;
 	//
 
 	var renderer = null;
@@ -56,17 +55,43 @@ function Viewport(
 
 	// 模型选中显示边框
 	var selectionBox = new THREE.BoxHelper();
+	// debugger;
+	// selectionBox.update = function (object) {
+	// 	console.log("--------------------object", this.object);
+	// };
 	selectionBox.material.depthTest = false;
 	selectionBox.material.transparent = true;
 	selectionBox.visible = false;
 	sceneHelpers.add(selectionBox);
 
+	// controls need to be added *after* main logic,
+	// otherwise controls.enabled doesn't work.
+	// CSS2DRenderer
+	var controls = new EditorControls(camera, container.dom);
+	if (config.labelRenderer) {
+		labelRenderer = new CSS2DRenderer();
+		// container.dom = labelRenderer.domElement;
+		labelRenderer.setSize(container.dom.offsetWidth, container.dom.offsetHeight);
+		labelRenderer.domElement.style.position = "absolute";
+		labelRenderer.domElement.style.top = "0px";
+		container.dom.appendChild(labelRenderer.domElement);
+	}
+	controls.addEventListener("change", function () {
+		console.log("controls---change");
+		// toggleOptionPanel();
+
+		signals.cameraChanged.dispatch(camera);
+		// if (config.sidebar) signals.refreshSidebarObject3D.dispatch(camera);
+		signals.refreshSidebarObject3D.dispatch(camera);
+	});
+	viewHelper.controls = controls;
+
 	var objectPositionOnDown = null;
 	var objectRotationOnDown = null;
 	var objectScaleOnDown = null;
-
+	var transformControls = null;
 	if (config.transformControlsShow) {
-		var transformControls = new TransformControls(camera, container.dom);
+		transformControls = new TransformControls(camera, container.dom);
 		transformControls.addEventListener("change", function () {
 			// 监听场景 控制器对模型操作
 			console.log("transformControls----change");
@@ -194,9 +219,11 @@ function Viewport(
 
 	function onMouseDown(event) {
 		// event.preventDefault();
+		if (event.button !== 0 || editor.selectDisabled) return false;
+		console.log("---onMouseDown", event);
 		var array = getMousePosition(container.dom, event.clientX, event.clientY);
 		onDownPosition.fromArray(array);
-
+		console.log("---------------onDownPosition", onDownPosition);
 		document.addEventListener("mouseup", onMouseUp, false);
 	}
 
@@ -279,28 +306,6 @@ function Viewport(
 	container.dom.addEventListener("mousedown", onMouseDown, false);
 	container.dom.addEventListener("touchstart", onTouchStart, false);
 	container.dom.addEventListener("dblclick", onDoubleClick, false);
-
-	// controls need to be added *after* main logic,
-	// otherwise controls.enabled doesn't work.
-	// CSS2DRenderer
-	var controls = new EditorControls(camera, container.dom);
-	if (config.labelRenderer) {
-		labelRenderer = new CSS2DRenderer();
-		labelRenderer.setSize(container.dom.offsetWidth, container.dom.offsetHeight);
-		labelRenderer.domElement.style.position = "absolute";
-		labelRenderer.domElement.style.top = "0px";
-		container.dom.appendChild(labelRenderer.domElement);
-		controls = new EditorControls(camera, labelRenderer.domElement);
-		screenDom = labelRenderer.domElement;
-	}
-	controls.addEventListener("change", function () {
-		console.log("controls---change");
-		toggleOptionPanel();
-
-		signals.cameraChanged.dispatch(camera);
-		if (config.sidebar) signals.refreshSidebarObject3D.dispatch(camera);
-	});
-	viewHelper.controls = controls;
 
 	// signals 事件控制
 
@@ -638,10 +643,6 @@ function Viewport(
 
 	var clock = new THREE.Clock(); // only used for animations
 
-	// function animate() {
-	// 	// renderControl();
-	// 	// render();
-	// }
 	this.animate = function () {
 		requestAnimationFrame(_self.animate);
 		var mixer = editor.mixer;
@@ -655,6 +656,7 @@ function Viewport(
 		}
 
 		if (viewHelper.animating === true) {
+			console.log("viewHelper.animating", viewHelper.animating);
 			viewHelper.update(delta);
 			needsUpdate = true;
 		}
@@ -669,11 +671,12 @@ function Viewport(
 	var endTime = 0;
 	scene.add(grid);
 	function render() {
+		console.log("-------------render");
 		startTime = performance.now();
 
 		// Adding/removing grid to scene so materials with depthWrite false
 		// don't render under the grid.
-
+		// scene.add(grid);
 		renderer.setViewport(0, 0, container.dom.offsetWidth, container.dom.offsetHeight);
 		renderer.render(scene, editor.viewportCamera);
 
@@ -692,7 +695,7 @@ function Viewport(
 		editor.signals.sceneRendered.dispatch(endTime - startTime);
 	}
 	this.controls = controls;
-	return { container, screenDom, render, prototype: this };
+	return { container, render, prototype: this };
 }
 
 function updateGridColors(grid, colors) {

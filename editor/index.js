@@ -25,6 +25,8 @@ function Index() {
 	const config = {
 		sidebar: false,
 		labelRenderer: true,
+		transformControlsShow: false,
+		optionPanel: false,
 	};
 	const viewport = new Viewport(editor, config);
 	console.log(viewport);
@@ -39,7 +41,7 @@ function Index() {
 	const resizer = new Resizer(editor);
 	document.body.appendChild(resizer.dom);
 
-	const toolBar = new Tool(editor); // 底部工具栏
+	const toolBar = new Tool(editor, viewport); // 底部工具栏
 
 	function onWindowResize() {
 		editor.signals.windowResize.dispatch();
@@ -66,6 +68,7 @@ function Index() {
 	}
 	function tool(flag) {
 		const dom = document.getElementById("viewport");
+		dom.removeEventListener("click", ranging);
 		switch (flag) {
 			case "1":
 				// 测距
@@ -80,5 +83,6 @@ function Index() {
 				break;
 		}
 	}
+	// toolBar.draw.createLine({ vertices: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 0, 0)], name: "测试" });
 }
 Index();
