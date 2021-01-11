@@ -8,7 +8,6 @@ function Contextmenu(editor, viewport) {
 	const container = new UIPanel();
 	container.setId("contextMenu");
 	container.setClass("context-menu");
-	debugger;
 	const labelContainer = new Label(editor, () => {
 		contextMenuHide();
 	});

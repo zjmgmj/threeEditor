@@ -38,6 +38,7 @@ function Viewport(
 
 	var camera = editor.camera;
 	var scene = editor.scene;
+	scene.add(new THREE.AxisHelper(200));
 	var sceneHelpers = editor.sceneHelpers;
 	var showSceneHelpers = true;
 

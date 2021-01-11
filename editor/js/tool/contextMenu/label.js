@@ -1,33 +1,46 @@
 import * as THREE from "../../../../build/three.module.js"; // 引用基本的three.js库
 import { UIPanel } from "../../libs/ui.js";
-// import Draw from "../draw.js";
 import Base from "../base.js";
 
 function Label(editor, callback = () => {}) {
-	// const draw = new Draw(editor);
 	const _self = this;
-	// _self.model = editor.selected;
 	const container = new UIPanel();
 	container.setClass("title");
 	container.setTextContent("标注");
 	container.onClick(clickEvent);
 	function clickEvent(e) {
 		const model = editor.selected;
-		console.log("-------标注", model);
-		// const max = model.geometry.boundingBox.max;
-		// { content, className, editor, position, dom, parent, name }
 		const dom = document.createElement("div");
 		dom.className = "comment-box";
 		const domTemp = `<textarea autofocus id=${model.id}></textarea>`;
-		// const domTemp = `<input type="text" name="" id=""/>`;
-		// const domTemp = `<textarea name="neirong"> </textarea>`;
 		dom.innerHTML = domTemp;
+
+		const box = new THREE.Box3();
+		box.setFromObject(model);
+		/*
+			5____4
+		1/___0/|
+		| 6__|_7
+		2/___3/
+
+		0: max.x, max.y, max.z
+		1: min.x, max.y, max.z
+		2: min.x, min.y, max.z
+		3: max.x, min.y, max.z
+		4: max.x, max.y, min.z
+		5: min.x, max.y, min.z
+		6: min.x, min.y, min.z
+		7: max.x, min.y, min.z
+    */
+		const newPoint = box.getCenter();
+		newPoint.y = box.max.y;
+		model.worldToLocal(newPoint);
+
 		Base.createLabel({
 			dom,
 			editor,
-			position: new THREE.Vector3(0, 0, 0),
+			position: newPoint,
 			parent: model,
-			content: "测试",
 			name: `label_${model.name}`,
 		});
 		callback();

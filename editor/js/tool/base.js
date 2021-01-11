@@ -1,4 +1,5 @@
 import { CSS2DObject } from "../../../examples/jsm/renderers/CSS2DRenderer.js";
+import * as THREE from "../../../../build/three.module.js"; // 引用基本的three.js库
 function getMousePosition(dom, x, y) {
 	// 获取鼠标在场景中坐标
 	var rect = dom.getBoundingClientRect();
@@ -78,4 +79,20 @@ function getSceneObjects(group) {
 	return objects;
 }
 
-export default { screenToWorld, createLabel };
+function getRay({ startPoint, endPoint, model }) {
+	// 注意执行.clone()返回一个新的向量，以免改变几何体顶点坐标值
+	// 几何体的顶点坐标要执行该几何体绑定模型对象经过的旋转平移缩放变换
+	// 几何体顶点经过的变换可以通过模型的本地矩阵属性.matrix或世界矩阵属性.matrixWorld获得
+	const worldCoord = endPoint.clone().applyMatrix4(model.matrixWorld);
+	// 可以通过position属性或.getWorldPosition()方法获得模型几何中心的世界坐标
+	// var centerCoord = model.position.clone();
+	const startCoord = startPoint.clone();
+	var dir = new THREE.Vector3(); //创建一个向量
+	// 几何体顶点坐标和几何体中心坐标构成的方向向量
+	dir.subVectors(startCoord, worldCoord);
+	const raycaster = new THREE.Raycaster(startCoord, dir.clone().normalize());
+	const intersects = raycaster.intersectObjects([model]);
+	return intersects;
+}
+
+export default { screenToWorld, createLabel, getRay };

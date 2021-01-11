@@ -88,17 +88,43 @@
 .context-menu .title:last-child{
   border-bottom: none;
 }
-.comment-box{}
+.comment-box{
+  top: -40px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+}
 .comment-box textarea{
   color: #fff;
   box-sizing: border-box;
-  padding: 10px;
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 0.5);
+  
+  background: none;
   font-size: 14px;
   line-height: 25px;
   width:150px;
-  /* min-height: 50px; */
   white-space: normal;
   font-family: Helvetica, Arial, sans-serif
 }
+textarea::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  cursor: pointer;
+}
+/* 修改 滚动条的 下面 的 样式 */
+textarea::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+}
+/* 修改 滑块 */
+textarea::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+}
+/* textarea::-webkit-resizer{
+  background: rgba(255, 255, 255, 0.5);
+} */
