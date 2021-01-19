@@ -117,7 +117,7 @@ function Editor() {
 
 	this.cameras = {};
 	this.viewportCamera = this.camera;
-
+	this.hideModels = [];
 	this.addCamera(this.camera);
 }
 

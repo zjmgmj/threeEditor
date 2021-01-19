@@ -8,7 +8,7 @@ function Label(editor, callback = () => {}) {
 	container.setClass("title");
 	container.setTextContent("标注");
 	container.onClick(clickEvent);
-	function clickEvent(e) {
+	function clickEvent() {
 		const model = editor.selected;
 		const dom = document.createElement("div");
 		dom.className = "comment-box";

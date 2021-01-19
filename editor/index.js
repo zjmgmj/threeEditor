@@ -8,6 +8,7 @@ import { Resizer } from "./js/Resizer.js";
 // import { VRButton } from "../examples/jsm/webxr/VRButton.js";
 
 import { Tool } from "./js/tool/index.js";
+import { loadModel } from "./js/tool/load.js";
 
 function Index() {
 	window.URL = window.URL || window.webkitURL;
@@ -83,6 +84,9 @@ function Index() {
 				break;
 		}
 	}
-	// toolBar.draw.createLine({ vertices: [new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 0, 0)], name: "测试" });
+	loadModel({ path: "../models/gltf/3d.gltf" }).then((res) => {
+		const model = res.scenes[0];
+		editor.addObject(model);
+	});
 }
 Index();
