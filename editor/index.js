@@ -36,8 +36,8 @@ function Index() {
 	const sidebarProject = new SidebarProject(editor);
 	console.log("sidebarProject", sidebarProject);
 
-	const menubar = new Menubar(editor); // 顶部菜单
-	document.body.appendChild(menubar.dom);
+	// const menubar = new Menubar(editor); // 顶部菜单
+	// document.body.appendChild(menubar.dom);
 
 	const resizer = new Resizer(editor);
 	document.body.appendChild(resizer.dom);
