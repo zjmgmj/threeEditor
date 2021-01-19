@@ -108,10 +108,10 @@ function Draw(editor) {
 			name,
 		});
 	}
-	function removeLabel({ name, parent }) {
-		const model = parent.getObjectByName(name);
-		if (model) editor.removeObject(model);
-	}
-	return { line, rangingSpot, createLabel, removeLabel, createLine };
+	// function removeLabel({ name, parent }) {
+	// 	const model = parent.getObjectByName(name);
+	// 	if (model) editor.removeObject(model);
+	// }
+	return { line, rangingSpot, createLabel, removeLabel: base.removeLabel, createLine };
 }
 export default Draw;

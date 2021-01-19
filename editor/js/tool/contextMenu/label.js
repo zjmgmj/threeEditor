@@ -12,7 +12,12 @@ function Label(editor, callback = () => {}) {
 		const model = editor.selected;
 		const dom = document.createElement("div");
 		dom.className = "comment-box";
-		const domTemp = `<textarea autofocus id=${model.id}></textarea>`;
+		const num = Math.random() * 1000;
+		const closeId = `close_${parseInt(num)}`;
+		const domTemp = `
+      <textarea autofocus id=${model.id}></textarea>
+      <div id=${closeId} class="label-close"><i class="icon iconfont iconclose"></i></div>
+    `;
 		dom.innerHTML = domTemp;
 
 		const box = new THREE.Box3();
@@ -35,13 +40,16 @@ function Label(editor, callback = () => {}) {
 		const newPoint = box.getCenter();
 		newPoint.y = box.max.y;
 		model.worldToLocal(newPoint);
-
+		const labelName = `label_${model.name}`;
 		Base.createLabel({
 			dom,
 			editor,
 			position: newPoint,
 			parent: model,
-			name: `label_${model.name}`,
+			name: labelName,
+		});
+		document.getElementById(closeId).addEventListener("click", function () {
+			Base.removeLabel({ name: labelName, parent: model });
 		});
 		callback();
 	}

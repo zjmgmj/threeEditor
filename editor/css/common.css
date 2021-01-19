@@ -82,11 +82,14 @@
 .context-menu .title{
   border-bottom: 1px rgba(255,255,255, 0.2) solid;
   box-sizing: border-box;
-  padding: 10px 15px;
+  padding: 9px 15px;
   cursor: pointer;
 }
 .context-menu .title:last-child{
   border-bottom: none;
+}
+.context-menu .title:hover{
+  background: rgba(166,194,255,.7);
 }
 .comment-box{
   top: -40px;
@@ -98,7 +101,6 @@
 .comment-box textarea{
   color: #fff;
   box-sizing: border-box;
-  
   background: none;
   font-size: 14px;
   line-height: 25px;
@@ -128,3 +130,16 @@ textarea::-webkit-scrollbar-thumb {
 /* textarea::-webkit-resizer{
   background: rgba(255, 255, 255, 0.5);
 } */
+.label-close{
+  color: #fff;
+  position: absolute;
+  bottom: -15px;
+  z-index: 3;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+.label-close .icon{
+  font-size: 30px;
+}

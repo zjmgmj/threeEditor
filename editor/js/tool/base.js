@@ -65,6 +65,11 @@ function createLabel({ content, className, editor, position, dom, parent, name }
 	// scene.dispose();
 }
 
+function removeLabel({ name, parent }) {
+	const model = parent.getObjectByName(name);
+	if (model) editor.removeObject(model);
+}
+
 function getSceneObjects(group) {
 	// const sceneModels = scene.children
 	const objects = [];
@@ -95,4 +100,4 @@ function getRay({ startPoint, endPoint, model }) {
 	return intersects;
 }
 
-export default { screenToWorld, createLabel, getRay };
+export default { screenToWorld, createLabel, getRay, removeLabel };

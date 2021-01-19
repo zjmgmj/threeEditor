@@ -78,8 +78,6 @@ function Contextmenu(editor, viewport) {
 		container.setTextContent("显示所有对象");
 		container.onClick(clickEvent);
 		function clickEvent() {
-			debugger;
-			console.log("-----------显示所有对象");
 			const models = editor.hideModels;
 			models.map(async (res) => {
 				editor.addObject(res.model, editor.scene.getObjectById(res.parentId));
