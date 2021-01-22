@@ -1,5 +1,4 @@
 import { UIPanel } from "../../libs/ui.js";
-import Base from "../base.js";
 import Label from "./label.js";
 import Hide from "./hide.js";
 import Focus from "./focus.js";

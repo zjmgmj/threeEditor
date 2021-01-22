@@ -1,6 +1,6 @@
 import { UIPanel } from "./libs/ui.js";
 
-import * as THREE from "../../build/three.module.js";
+import * as THREE from "../libs/three.module.js";
 
 function ViewHelper(editorCamera, container) {
 	THREE.Object3D.call(this);

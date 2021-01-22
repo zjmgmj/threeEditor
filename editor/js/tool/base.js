@@ -1,5 +1,5 @@
-import { CSS2DObject } from "../../../examples/jsm/renderers/CSS2DRenderer.js";
-import * as THREE from "../../../../build/three.module.js"; // 引用基本的three.js库
+import { CSS2DObject } from "../../libs/jsm/renderers/CSS2DRenderer.js";
+import * as THREE from "../../libs/three.module.js"; // 引用基本的three.js库
 function getMousePosition(dom, x, y) {
 	// 获取鼠标在场景中坐标
 	var rect = dom.getBoundingClientRect();

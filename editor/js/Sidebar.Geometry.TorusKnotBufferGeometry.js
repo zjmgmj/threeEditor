@@ -1,11 +1,10 @@
-import * as THREE from '../../build/three.module.js';
+import * as THREE from "../libs/three.module.js";
 
-import { UIRow, UIText, UIInteger, UINumber } from './libs/ui.js';
+import { UIRow, UIText, UIInteger, UINumber } from "./libs/ui.js";
 
-import { SetGeometryCommand } from './commands/SetGeometryCommand.js';
+import { SetGeometryCommand } from "./commands/SetGeometryCommand.js";
 
-function GeometryParametersPanel( editor, object ) {
-
+function GeometryParametersPanel(editor, object) {
 	var strings = editor.strings;
 
 	var container = new UIRow();
@@ -16,81 +15,87 @@ function GeometryParametersPanel( editor, object ) {
 	// radius
 
 	var radiusRow = new UIRow();
-	var radius = new UINumber( parameters.radius ).onChange( update );
+	var radius = new UINumber(parameters.radius).onChange(update);
 
-	radiusRow.add( new UIText( strings.getKey( 'sidebar/geometry/torusKnot_geometry/radius' ) ).setWidth( '90px' ) );
-	radiusRow.add( radius );
+	radiusRow.add(new UIText(strings.getKey("sidebar/geometry/torusKnot_geometry/radius")).setWidth("90px"));
+	radiusRow.add(radius);
 
-	container.add( radiusRow );
+	container.add(radiusRow);
 
 	// tube
 
 	var tubeRow = new UIRow();
-	var tube = new UINumber( parameters.tube ).onChange( update );
+	var tube = new UINumber(parameters.tube).onChange(update);
 
-	tubeRow.add( new UIText( strings.getKey( 'sidebar/geometry/torusKnot_geometry/tube' ) ).setWidth( '90px' ) );
-	tubeRow.add( tube );
+	tubeRow.add(new UIText(strings.getKey("sidebar/geometry/torusKnot_geometry/tube")).setWidth("90px"));
+	tubeRow.add(tube);
 
-	container.add( tubeRow );
+	container.add(tubeRow);
 
 	// tubularSegments
 
 	var tubularSegmentsRow = new UIRow();
-	var tubularSegments = new UIInteger( parameters.tubularSegments ).setRange( 1, Infinity ).onChange( update );
+	var tubularSegments = new UIInteger(parameters.tubularSegments).setRange(1, Infinity).onChange(update);
 
-	tubularSegmentsRow.add( new UIText( strings.getKey( 'sidebar/geometry/torusKnot_geometry/tubularsegments' ) ).setWidth( '90px' ) );
-	tubularSegmentsRow.add( tubularSegments );
+	tubularSegmentsRow.add(
+		new UIText(strings.getKey("sidebar/geometry/torusKnot_geometry/tubularsegments")).setWidth("90px")
+	);
+	tubularSegmentsRow.add(tubularSegments);
 
-	container.add( tubularSegmentsRow );
+	container.add(tubularSegmentsRow);
 
 	// radialSegments
 
 	var radialSegmentsRow = new UIRow();
-	var radialSegments = new UIInteger( parameters.radialSegments ).setRange( 1, Infinity ).onChange( update );
+	var radialSegments = new UIInteger(parameters.radialSegments).setRange(1, Infinity).onChange(update);
 
-	radialSegmentsRow.add( new UIText( strings.getKey( 'sidebar/geometry/torusKnot_geometry/radialsegments' ) ).setWidth( '90px' ) );
-	radialSegmentsRow.add( radialSegments );
+	radialSegmentsRow.add(
+		new UIText(strings.getKey("sidebar/geometry/torusKnot_geometry/radialsegments")).setWidth("90px")
+	);
+	radialSegmentsRow.add(radialSegments);
 
-	container.add( radialSegmentsRow );
+	container.add(radialSegmentsRow);
 
 	// p
 
 	var pRow = new UIRow();
-	var p = new UINumber( parameters.p ).onChange( update );
+	var p = new UINumber(parameters.p).onChange(update);
 
-	pRow.add( new UIText( strings.getKey( 'sidebar/geometry/torusKnot_geometry/p' ) ).setWidth( '90px' ) );
-	pRow.add( p );
+	pRow.add(new UIText(strings.getKey("sidebar/geometry/torusKnot_geometry/p")).setWidth("90px"));
+	pRow.add(p);
 
-	container.add( pRow );
+	container.add(pRow);
 
 	// q
 
 	var qRow = new UIRow();
-	var q = new UINumber( parameters.q ).onChange( update );
+	var q = new UINumber(parameters.q).onChange(update);
 
-	qRow.add( new UIText( strings.getKey( 'sidebar/geometry/torusKnot_geometry/q' ) ).setWidth( '90px' ) );
-	qRow.add( q );
+	qRow.add(new UIText(strings.getKey("sidebar/geometry/torusKnot_geometry/q")).setWidth("90px"));
+	qRow.add(q);
 
-	container.add( qRow );
-
+	container.add(qRow);
 
 	//
 
 	function update() {
-
-		editor.execute( new SetGeometryCommand( editor, object, new THREE.TorusKnotBufferGeometry(
-			radius.getValue(),
-			tube.getValue(),
-			tubularSegments.getValue(),
-			radialSegments.getValue(),
-			p.getValue(),
-			q.getValue()
-		) ) );
-
+		editor.execute(
+			new SetGeometryCommand(
+				editor,
+				object,
+				new THREE.TorusKnotBufferGeometry(
+					radius.getValue(),
+					tube.getValue(),
+					tubularSegments.getValue(),
+					radialSegments.getValue(),
+					p.getValue(),
+					q.getValue()
+				)
+			)
+		);
 	}
 
 	return container;
-
 }
 
 export { GeometryParametersPanel };

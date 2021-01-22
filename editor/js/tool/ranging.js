@@ -1,6 +1,6 @@
 import Draw from "./draw.js";
 import Base from "./base.js";
-import * as THREE from "../../../build/three.module.js";
+import * as THREE from "../../libs/three.module.js";
 function Ranging(editor) {
 	const _self = this;
 	const draw = new Draw(editor);

@@ -1,11 +1,11 @@
-import * as THREE from "../build/three.module.js"; // 引用基本的three.js库
+import * as THREE from "./libs/three.module.js"; // 引用基本的three.js库
 
 import { Editor } from "./js/Editor.js";
 import { Viewport } from "./js/Viewport.js"; // 中心视图
 import { SidebarProject } from "./js/Sidebar.Project.js";
-import { Menubar } from "./js/Menubar.js"; // 顶部菜单
+// import { Menubar } from "./js/Menubar.js"; // 顶部菜单
 import { Resizer } from "./js/Resizer.js";
-// import { VRButton } from "../examples/jsm/webxr/VRButton.js";
+// import { VRButton } from "examples/jsm/webxr/VRButton.js";
 
 import { Tool } from "./js/tool/index.js";
 import { loadModel } from "./js/tool/load.js";
@@ -51,6 +51,8 @@ function Index() {
 	onWindowResize();
 
 	$(".toolbar").on("click", function (e) {
+		$(".toolbar").removeClass("active");
+		$(this).addClass("active");
 		const flag = this.getAttribute("data-flag");
 		tool(flag, e);
 	});
@@ -65,6 +67,7 @@ function Index() {
 		});
 		toolBar.ranging.start(postition, () => {
 			dom.removeEventListener("click", ranging);
+			$(".toolbar").removeClass("active");
 		});
 	}
 	function tool(flag) {
@@ -77,7 +80,16 @@ function Index() {
 				break;
 			case "2":
 				// 视角切换
-				new toolBar.LockControl(editor, viewport);
+				const lockControl = new toolBar.LockControl(editor, viewport);
+				lockControl.start().unlockAfter = () => {
+					$(".toolbar").removeClass("active");
+				};
+				break;
+			case "3":
+				// 模型节点
+				toolBar.modelNode.toggle().hideAfter = () => {
+					$(".toolbar").removeClass("active");
+				};
 				break;
 			default:
 				console.log("----------", flag);

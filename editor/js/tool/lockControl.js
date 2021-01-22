@@ -1,7 +1,15 @@
-import * as THREE from "../../../build/three.module.js";
-import { PointerLockControls } from "../../../examples/jsm/controls/PointerLockControls.js";
+import * as THREE from "../../libs/three.module.js";
+import { PointerLockControls } from "../../libs/jsm/controls/PointerLockControls.js";
 function LockControls(editor, viewport) {
 	// -------------------
+	// const _self = this;
+	this.editor = editor;
+	this.viewport = viewport;
+	return this;
+}
+
+LockControls.prototype.start = function () {
+	const { viewport, editor } = this;
 	const _self = this;
 	let { container, render } = viewport;
 	const scene = editor.scene;
@@ -195,9 +203,12 @@ function LockControls(editor, viewport) {
 	function unlock() {
 		viewport.prototype.animate = animate;
 		viewport.prototype.controls = controls;
-		console.log("---------------unlock", viewport.prototype.animate);
 		pointerLockControls.removeEventListener("unlock", unlock);
+		_self.unlockAfter();
 	}
 	return this;
-}
+};
+
+LockControls.prototype.unlockAfter = function () {};
+
 export default LockControls;

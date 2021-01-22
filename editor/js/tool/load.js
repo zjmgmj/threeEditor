@@ -1,7 +1,7 @@
-import * as THREE from "../../../../build/three.module.js"; // 引用基本的three.js库
-import { OBJLoader } from "../../../examples/jsm/loaders/OBJLoader.js";
-import { FBXLoader } from "../../../examples/jsm/loaders/FBXLoader.js";
-import { GLTFLoader } from "../../../examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "../../libs/three.module.js"; // 引用基本的three.js库
+import { OBJLoader } from "../../libs/jsm/loaders/OBJLoader.js";
+import { FBXLoader } from "../../libs/jsm/loaders/FBXLoader.js";
+import { GLTFLoader } from "../../libs/jsm/loaders/GLTFLoader.js";
 // import { ZipLoader } from "../libs/three-ziploader/src/ZipLoader.js"; // 需在包中手动引入three
 function loadZip(path) {
 	// const manager = new THREE.LoadingManager();

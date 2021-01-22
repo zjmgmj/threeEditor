@@ -1,4 +1,4 @@
-import * as THREE from "../../../../build/three.module.js"; // 引用基本的three.js库
+import * as THREE from "../../../libs/three.module.js"; // 引用基本的three.js库
 import { UIPanel } from "../../libs/ui.js";
 import Base from "../base.js";
 

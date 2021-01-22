@@ -1,5 +1,5 @@
-import * as THREE from "../../../build/three.module.js"; // 引用基本的three.js库
-import THREEMeshLine from "../../../build/THREEMeshLine.js";
+import * as THREE from "../../libs/three.module.js"; // 引用基本的three.js库
+import THREEMeshLine from "../../libs/THREEMeshLine.js";
 import base from "./base.js";
 const { MeshLine, MeshLineMaterial } = new THREEMeshLine(THREE);
 function Draw(editor) {

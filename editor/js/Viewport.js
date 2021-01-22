@@ -1,6 +1,6 @@
-import * as THREE from "../../build/three.module.js";
+import * as THREE from "../libs/three.module.js";
 
-import { TransformControls } from "../../examples/jsm/controls/TransformControls.js"; // 变换控件
+import { TransformControls } from "../libs/jsm/controls/TransformControls.js"; // 变换控件
 
 import { UIPanel } from "./libs/ui.js";
 
@@ -13,7 +13,7 @@ import { SetPositionCommand } from "./commands/SetPositionCommand.js";
 import { SetRotationCommand } from "./commands/SetRotationCommand.js";
 import { SetScaleCommand } from "./commands/SetScaleCommand.js";
 import { Toolbar } from "./Toolbar.js"; // 左上角的 移动旋转按钮面板
-import { CSS2DRenderer } from "../../examples/jsm/renderers/CSS2DRenderer.js";
+import { CSS2DRenderer } from "../libs/jsm/renderers/CSS2DRenderer.js";
 import BoxHelper from "./tool/boxHelper.js";
 function Viewport(
 	editor,
