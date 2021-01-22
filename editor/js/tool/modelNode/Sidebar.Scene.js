@@ -132,7 +132,7 @@ function SidebarScene(editor) {
 		(function addObjects(objects, pad) {
 			for (var i = 0, l = objects.length; i < l; i++) {
 				var object = objects[i];
-
+				if (object.name.indexOf("temp_") !== -1) continue;
 				if (nodeStates.has(object) === false) {
 					nodeStates.set(object, false);
 				}

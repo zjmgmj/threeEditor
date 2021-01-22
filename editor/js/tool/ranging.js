@@ -14,13 +14,13 @@ function Ranging(editor) {
 	this.callback = function () {};
 	this.start = function (position, callback = () => {}) {
 		_self.callback = callback;
-		lineName = `line_${lineNum}`;
-		labelName = `label_${lineNum}`;
-		spotName = `spot_${lineNum}`;
-		group = editor.scene.getObjectByName(`测距${i}`);
+		lineName = `${Base.tempNameTag}line_${lineNum}`;
+		labelName = `${Base.tempNameTag}label_${lineNum}`;
+		spotName = `${Base.tempNameTag}spot_${lineNum}`;
+		group = editor.scene.getObjectByName(`${Base.tempNameTag}测距${i}`);
 		if (!group) {
 			group = new THREE.Group();
-			group.name = `测距${i}`;
+			group.name = `${Base.tempNameTag}测距${i}`;
 			editor.addObject(group);
 		}
 		// position.y += 1;

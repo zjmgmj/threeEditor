@@ -15,9 +15,18 @@ function loadZip(path) {
 	// 	});
 	// });
 }
+
 function loadModel({ format = "gltf", path }) {
 	console.log("--------loadModel", path);
 	// 模型加载
+	// if (format === "json") {
+	// 	$.get(path, function (res) {
+	// 		debugger;
+	// 		console.log(res);
+	// 		loadJson(res.children);
+	// 	});
+	// 	return false;
+	// }
 	let loader = null;
 	switch (format) {
 		case "obj":
@@ -41,4 +50,12 @@ function loadModel({ format = "gltf", path }) {
 	});
 }
 
-export { loadZip, loadModel };
+function $get(url) {
+	return new Promise((resolve) => {
+		$.get(url, function (res) {
+			resolve(res);
+		});
+	});
+}
+
+export { loadZip, loadModel, $get };

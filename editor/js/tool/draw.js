@@ -2,6 +2,7 @@ import * as THREE from "../../libs/three.module.js"; // 引用基本的three.js�
 import THREEMeshLine from "../../libs/THREEMeshLine.js";
 import base from "./base.js";
 const { MeshLine, MeshLineMaterial } = new THREEMeshLine(THREE);
+
 function Draw(editor) {
 	// Object.assign(this, base);
 	const _self = this;
@@ -51,17 +52,10 @@ function Draw(editor) {
 			name,
 		});
 		document.getElementById(id).addEventListener("click", (e) => {
-			console.log("------------------parent", parent);
+			debugger;
 			const spotModel = parent.getObjectByName(name);
 			editor.removeObject(spotModel, parent);
-			let idx = Number(name.split("_")[1]);
-			// const names = [`spot_${idx}`, `line_${idx}`, `label_${idx}`];
-			// const models = parent.children.filter((item) => {
-			// 	return names.indexOf(item.name) !== -1;
-			// });
-			// models.map((item) => {
-			// 	editor.removeObject(item, parent);
-			// });
+			let idx = Number(name.split("_")[2]);
 
 			if (idx === 0) {
 				removeRangingSpot(parent, idx);
@@ -75,25 +69,20 @@ function Draw(editor) {
 	}
 	function removeRangingSpot(parent, idx) {
 		if (idx === 0) {
-			const spotModel = parent.getObjectByName(`spot_${idx}`);
+			const spotModel = parent.getObjectByName(`${base.tempNameTag}spot_${idx}`);
 			if (spotModel) editor.removeObject(spotModel, parent);
 		}
-		const lineModel = parent.getObjectByName(`line_${idx}`);
+		const lineModel = parent.getObjectByName(`${base.tempNameTag}line_${idx}`);
 		if (lineModel) {
 			editor.removeObject(lineModel, parent);
-			const labelModel = parent.getObjectByName(`label_${idx}`);
+			const labelModel = parent.getObjectByName(`${base.tempNameTag}label_${idx}`);
 			editor.removeObject(labelModel, parent);
 		}
-		const lineModelNext = parent.getObjectByName(`line_${idx + 1}`);
+		const lineModelNext = parent.getObjectByName(`${base.tempNameTag}line_${idx + 1}`);
 		if (!lineModelNext) {
-			const spotModel = parent.getObjectByName(`spot_${idx + 1}`);
+			const spotModel = parent.getObjectByName(`${base.tempNameTag}spot_${idx + 1}`);
 			if (spotModel) editor.removeObject(spotModel, parent);
 		}
-		// const lineModelPrev = parent.getObjectByName(`line_${idx - 1}`);
-		// if (!lineModelPrev) {
-		// 	const spotModel = parent.getObjectByName(`spot_${idx - 1}`);
-		// 	if (spotModel) editor.removeObject(spotModel, parent);
-		// }
 	}
 	function createLabel({ position = new THREE.Vector3(0, 0, 0), parent, content, name }) {
 		const dom = document.createElement("div");

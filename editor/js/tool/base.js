@@ -1,5 +1,6 @@
 import { CSS2DObject } from "../../libs/jsm/renderers/CSS2DRenderer.js";
 import * as THREE from "../../libs/three.module.js"; // 引用基本的three.js库
+const tempNameTag = "temp_";
 function getMousePosition(dom, x, y) {
 	// 获取鼠标在场景中坐标
 	var rect = dom.getBoundingClientRect();
@@ -36,7 +37,7 @@ function screenToWorld({ dom, x, z, editor, targetY = 0 }) {
 	if (intersects.length > 0) {
 		pos.copy(intersects[0].point);
 	} else {
-		vec.set((x / dom.clientWidth) * 2 - 1, -(z / dom.clientHeight) * 2 + 1.06, 0.5);
+		vec.set((x / dom.clientWidth) * 2 - 1, -(z / dom.clientHeight) * 2 + 1, 0.5);
 		vec.unproject(camera);
 		vec.sub(camera.position).normalize();
 		var distance = (targetY - camera.position.y) / vec.y;
@@ -100,4 +101,4 @@ function getRay({ startPoint, endPoint, model }) {
 	return intersects;
 }
 
-export default { screenToWorld, createLabel, getRay, removeLabel };
+export default { screenToWorld, createLabel, getRay, removeLabel, tempNameTag };

@@ -91,14 +91,44 @@ function Index() {
 					$(".toolbar").removeClass("active");
 				};
 				break;
+			case "4":
+				// 查看模型详情
+				toolBar.modelDetail.toggle().hideAfter = () => {
+					$(".toolbar").removeClass("active");
+				};
+				break;
 			default:
 				console.log("----------", flag);
 				break;
 		}
 	}
-	loadModel({ path: "../models/gltf/3d.gltf" }).then((res) => {
+	// loadModel({ path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json", format: "json" });
+	loadModel({
+		path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/0a4e4806-c09a-416f-8065-4e1cbcf39bc6.gltf",
+	}).then((res) => {
 		const model = res.scenes[0];
 		editor.addObject(model);
 	});
+	loadModel({
+		path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/0aaa8f8a-6476-4bba-9a42-621e0dc93165.gltf",
+	}).then((res) => {
+		const model = res.scenes[0];
+		editor.addObject(model);
+	});
+	loadModel({
+		path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/0b4b8c21-59a7-4b07-a2f0-127838f3c787.gltf",
+	}).then((res) => {
+		const model = res.scenes[0];
+		editor.addObject(model);
+	});
+	// $.get("../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json", function (res) {
+	// 	debugger;
+	// 	console.log(res);
+	// 	loadJson(res.children);
+	// });
+	// loadModel({ path: "../models/gltf/3d.gltf" }).then((res) => {
+	// 	const model = res.scenes[0];
+	// 	editor.addObject(model);
+	// });
 }
 Index();

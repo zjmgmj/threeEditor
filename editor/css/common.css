@@ -161,7 +161,7 @@
   overflow: auto;
   border-radius: 5px;
   transition: all 0.5s;
-  transform: translateX(-302px);
+  transform: translateX(-305px);
 }
 .model-node .Outliner{
   height: 100%;
@@ -173,4 +173,32 @@
 }
 .model-node .Outliner .option:hover{
   background-color: rgba(255,255,255,0.15);
+}
+.model-detail{
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  bottom: 10px;
+  width: 300px;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  border-radius: 5px;
+  transition: all 0.5s;
+  color: #fff;
+  /* transform: translateX(-302px); */
+}
+.model-detail-item{
+  padding: 0 15px;
+  line-height: 35px;
+  display: flex;
+  border-bottom: 1px rgba(255,255,255,0.5) solid;
+}
+.model-detail-name{
+  width: 90px;
+}
+.model-detail-val{
+  flex: 1;
+  padding-left: 10px;
+  border-left: 1px rgba(255,255,255,0.5) solid;
 }
