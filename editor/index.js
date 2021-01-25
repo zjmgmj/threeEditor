@@ -28,6 +28,8 @@ function Index() {
 		labelRenderer: true,
 		transformControlsShow: false,
 		optionPanel: false,
+		infoShow: false,
+		axisHelperShow: false,
 	};
 	const viewport = new Viewport(editor, config);
 	console.log(viewport);
@@ -51,7 +53,7 @@ function Index() {
 	onWindowResize();
 
 	$(".toolbar").on("click", function (e) {
-		$(".toolbar").removeClass("active");
+		// $(".toolbar").removeClass("active");
 		$(this).addClass("active");
 		const flag = this.getAttribute("data-flag");
 		tool(flag, e);
@@ -67,7 +69,7 @@ function Index() {
 		});
 		toolBar.ranging.start(postition, () => {
 			dom.removeEventListener("click", ranging);
-			$(".toolbar").removeClass("active");
+			$("#rangingTool").removeClass("active");
 		});
 	}
 	function tool(flag) {
@@ -76,25 +78,33 @@ function Index() {
 		switch (flag) {
 			case "1":
 				// 测距
+				toolBar.modelNode.hide();
+				toolBar.modelDetail.hide();
+				$(".toolbar").removeClass("active");
+				$("#rangingTool").addClass("active");
 				dom.addEventListener("click", ranging);
 				break;
 			case "2":
 				// 视角切换
+				toolBar.modelNode.hide();
+				toolBar.modelDetail.hide();
+				$(".toolbar").removeClass("active");
+				$("#visualAngleTool").addClass("active");
 				const lockControl = new toolBar.LockControl(editor, viewport);
 				lockControl.start().unlockAfter = () => {
-					$(".toolbar").removeClass("active");
+					$("#visualAngleTool").removeClass("active");
 				};
 				break;
 			case "3":
 				// 模型节点
 				toolBar.modelNode.toggle().hideAfter = () => {
-					$(".toolbar").removeClass("active");
+					$("#nodeTool").removeClass("active");
 				};
 				break;
 			case "4":
 				// 查看模型详情
 				toolBar.modelDetail.toggle().hideAfter = () => {
-					$(".toolbar").removeClass("active");
+					$("#detailTool").removeClass("active");
 				};
 				break;
 			default:

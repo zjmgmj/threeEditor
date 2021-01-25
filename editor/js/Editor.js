@@ -188,7 +188,41 @@ Editor.prototype = {
 		object.name = name;
 		this.signals.sceneGraphChanged.dispatch();
 	},
+	// ids array model id
+	removeAll: function (ids) {
+		const _self = this;
+		const models = this.scene.children;
+		if (ids) {
+			for (let i = 0; i < ids.length; i++) {
+				const model = this.scene.getObjectById(ids[i]);
+				remove(model);
+			}
+		} else {
+			const noRemove = ["AmbientLight", "DirectionalLight", "AxesHelper", "GridHelper"];
+			const list = models.filter((model) => {
+				return noRemove.indexOf(model.constructor.name) === -1;
+			});
+			for (let i = 0; i < list.length; i++) {
+				remove(list[i]);
+			}
+		}
 
+		this.signals.sceneGraphChanged.dispatch();
+		function remove(object) {
+			if (object.parent === null) return; // avoid deleting the camera or scene
+			// 删除掉所有的模型组内的mesh
+			object.traverse(function (item) {
+				_self.removeCamera(item);
+				_self.removeHelper(item);
+				if (item.isMesh) {
+					item.geometry.dispose(); // 删除几何体
+					item.material.dispose(); // 删除材质
+				}
+			});
+			object.clear();
+			object.parent.remove(object);
+		}
+	},
 	removeObject: function (object) {
 		if (object.parent === null) return; // avoid deleting the camera or scene
 
@@ -408,12 +442,16 @@ Editor.prototype = {
 	//
 
 	select: function (object) {
+		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial.clone();
 		if (this.selected === object) return;
 
 		var uuid = null;
 
 		if (object !== null) {
 			uuid = object.uuid;
+			const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
+			object.originalMaterial = object.material.clone();
+			object.material = material;
 		}
 
 		this.selected = object;

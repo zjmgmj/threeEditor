@@ -14,10 +14,18 @@ import { SetRotationCommand } from "./commands/SetRotationCommand.js";
 import { SetScaleCommand } from "./commands/SetScaleCommand.js";
 import { Toolbar } from "./Toolbar.js"; // 左上角的 移动旋转按钮面板
 import { CSS2DRenderer } from "../libs/jsm/renderers/CSS2DRenderer.js";
-import BoxHelper from "./tool/boxHelper.js";
+import { SceneUtils } from "../libs/jsm/utils/SceneUtils.js";
 function Viewport(
 	editor,
-	config = { sidebar: false, transformControlsShow: false, optionPanel: false, labelRenderer: false }
+	config = {
+		sidebar: false,
+		transformControlsShow: false,
+		optionPanel: false,
+		labelRenderer: true, // 标签
+		infoShow: true, // 场景左下角显示信息
+		axisHelperShow: true, // 辅助坐标
+		gridShow: true, // 网格
+	}
 ) {
 	const _self = this;
 	var signals = editor.signals;
@@ -27,7 +35,7 @@ function Viewport(
 	container.setPosition("absolute");
 
 	// container.add(new ViewportCamera(editor)); // 场景中添加相机 右上角相机切换
-	container.add(new ViewportInfo(editor)); // 场景左下角显示信息
+	if (config.infoShow) container.add(new ViewportInfo(editor)); // 场景左下角显示信息
 	// let  = container.dom;
 	//
 
@@ -38,7 +46,7 @@ function Viewport(
 
 	var camera = editor.camera;
 	var scene = editor.scene;
-	scene.add(new THREE.AxisHelper(200));
+	if (config.axisHelperShow) scene.add(new THREE.AxisHelper(200));
 	var sceneHelpers = editor.sceneHelpers;
 	var showSceneHelpers = true;
 
@@ -198,12 +206,12 @@ function Viewport(
 	function handleClick() {
 		// 鼠标点击场景
 		console.log("handleClick");
+
 		if (onDownPosition.distanceTo(onUpPosition) === 0) {
 			var intersects = getIntersects(onUpPosition, objects);
 
 			if (intersects.length > 0) {
 				var object = intersects[0].object;
-
 				if (object.userData.object !== undefined) {
 					// helper
 					editor.select(object.userData.object);
@@ -393,12 +401,11 @@ function Viewport(
 
 	signals.objectSelected.add(function (object) {
 		// 模型选择
-		console.log("模型选择", object);
+		console.log("监听模型选择", object);
 		selectionBox.visible = false;
 		if (transformControls) transformControls.detach();
-
 		if (object !== null && object !== scene && object !== camera) {
-			box.setFromObject(object);
+			// box.setFromObject(object);
 
 			if (box.isEmpty() === false) {
 				selectionBox.setFromObject(object);
@@ -670,9 +677,8 @@ function Viewport(
 
 	var startTime = 0;
 	var endTime = 0;
-	scene.add(grid);
+	if (config.gridShow) scene.add(grid);
 	function render() {
-		console.log("-------------render");
 		startTime = performance.now();
 
 		// Adding/removing grid to scene so materials with depthWrite false

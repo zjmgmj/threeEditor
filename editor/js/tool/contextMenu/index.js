@@ -3,6 +3,7 @@ import Label from "./label.js";
 import Hide from "./hide.js";
 import Focus from "./focus.js";
 import ClearSelect from "./clearSelect.js";
+import ClearRanging from "./clearRanging.js";
 function Contextmenu(editor, viewport) {
 	const _self = this;
 	const panelDom = viewport.container.dom || document;
@@ -34,6 +35,13 @@ function Contextmenu(editor, viewport) {
 		contextMenuHide();
 	});
 
+	const ClearRangingContainer = new ClearRanging(editor, viewport);
+	ClearRangingContainer.init();
+	ClearRangingContainer.clickAfter = () => {
+		contextMenuHide();
+	};
+
+	container.add(ClearRangingContainer.container);
 	container.add(labelContainer.container);
 	container.add(hideContainer.container);
 	container.add(focusContainer.container);
@@ -51,6 +59,7 @@ function Contextmenu(editor, viewport) {
 				el.style.display = "block";
 			}
 		}
+		ClearRangingContainer.container.dom.style.display = isRanging() ? "block" : "none";
 		editor.selectDisabled = true;
 		container.dom.style.cssText = `left: ${e.x}px; top:${e.y - 33}px; display: block;`;
 		container.dom.addEventListener("mouseover", () => {
@@ -84,6 +93,14 @@ function Contextmenu(editor, viewport) {
 			callback();
 		}
 		return { container, clickEvent };
+	}
+
+	function isRanging() {
+		const list = editor.scene.children;
+		const isRanging = list.find((item) => {
+			return item.constructor.name === "Group" && item.name.indexOf("temp_测距") === 0;
+		});
+		return isRanging;
 	}
 
 	return { prototype: _self };
