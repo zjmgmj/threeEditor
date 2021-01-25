@@ -1,0 +1,204 @@
+
+.row{
+  display: flex;
+}
+.col{
+  flex: 1;
+}
+.tool-panel{
+  position: absolute;
+  bottom: 30px;
+  background: rgba(0,0,0, 0.5);
+  display: flex;
+  width: 250px;
+  z-index: 2;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  border-radius: 3px;
+  text-align: center;
+  padding: 7px;
+}
+.tool-panel .iconfont{
+  font-size: 35px;
+  box-sizing: border-box;
+  /* padding: 7px 10px; */
+  padding: 4px;
+  cursor: pointer;
+  position: relative;
+  margin: 0 3px;
+}
+.tool-panel .toolbar label{
+  position: absolute;
+  display: none;
+  top: -35px;
+  padding: 5px;
+  border-radius: 2px;
+  font-size: 13px;
+  /* width: 100px; */
+  left: 0;
+  right: 0;
+  /* transform: translateX(-50%); */
+  background: rgba(0,0,0,0.5);
+  text-align: center;
+}
+.tool-panel .toolbar:hover label{
+  display: block;
+}
+.toolbar.active{
+  background: rgba(0,0,0,0.5);
+  border-radius: 10px;
+}
+.spot{
+  width: 5px;
+  height: 5px;
+  border: 2px solid #fff;
+  background: #009bff;
+  border-radius: 100%;
+}
+.spot .del-spot{
+  width: 50px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  padding: 3px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  display: none;
+}
+.spot:hover .del-spot{
+  display: block;
+}
+.label{
+  padding: 5px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+.context-menu{
+  position: absolute;
+  min-Width: 100px;
+  box-sizing: border-box;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 3px;
+  color: #fff;
+  display: none;
+}
+.context-menu .title{
+  border-bottom: 1px rgba(255,255,255, 0.2) solid;
+  box-sizing: border-box;
+  padding: 9px 15px;
+  cursor: pointer;
+}
+.context-menu .title:last-child{
+  border-bottom: none;
+}
+.context-menu .title:hover{
+  background: rgba(166,194,255,.7);
+}
+.comment-box{
+  top: -40px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.comment-box textarea{
+  color: #fff;
+  box-sizing: border-box;
+  background: none;
+  font-size: 14px;
+  line-height: 25px;
+  width:150px;
+  white-space: normal;
+  font-family: Helvetica, Arial, sans-serif
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  cursor: pointer;
+}
+/* 修改 滚动条的 下面 的 样式 */
+*::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+}
+/* 修改 滑块 */
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+}
+/* textarea::-webkit-resizer{
+  background: rgba(255, 255, 255, 0.5);
+} */
+.label-close{
+  color: #fff;
+  position: absolute;
+  bottom: -15px;
+  z-index: 3;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+.label-close .icon{
+  font-size: 30px;
+}
+.model-node{
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  bottom: 10px;
+  width: 300px;
+  box-sizing: border-box;
+  /* padding: 10px; */
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  border-radius: 5px;
+  transition: all 0.5s;
+  transform: translateX(-305px);
+}
+.model-node .Outliner{
+  height: 100%;
+  background-color: inherit;
+  overflow: inherit;
+}
+.model-node .Outliner .option{
+  color: #fff;
+}
+.model-node .Outliner .option:hover{
+  background-color: rgba(255,255,255,0.15);
+}
+.model-detail{
+  position: absolute;
+  right: 5px;
+  top: 10px;
+  bottom: 10px;
+  width: 300px;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  border-radius: 5px;
+  transition: all 0.5s;
+  color: #fff;
+  /* transform: translateX(-302px); */
+}
+.model-detail-item{
+  padding: 0 15px;
+  line-height: 35px;
+  display: flex;
+  border-bottom: 1px rgba(255,255,255,0.5) solid;
+}
+.model-detail-name{
+  width: 90px;
+}
+.model-detail-val{
+  flex: 1;
+  padding-left: 10px;
+  border-left: 1px rgba(255,255,255,0.5) solid;
+}
