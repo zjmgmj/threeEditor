@@ -52,7 +52,6 @@ function Draw(editor) {
 			name,
 		});
 		document.getElementById(id).addEventListener("click", (e) => {
-			debugger;
 			const spotModel = parent.getObjectByName(name);
 			editor.removeObject(spotModel, parent);
 			let idx = Number(name.split("_")[2]);

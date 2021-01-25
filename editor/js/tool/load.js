@@ -17,16 +17,7 @@ function loadZip(path) {
 }
 
 function loadModel({ format = "gltf", path }) {
-	console.log("--------loadModel", path);
 	// 模型加载
-	// if (format === "json") {
-	// 	$.get(path, function (res) {
-	// 		debugger;
-	// 		console.log(res);
-	// 		loadJson(res.children);
-	// 	});
-	// 	return false;
-	// }
 	let loader = null;
 	switch (format) {
 		case "obj":
@@ -42,11 +33,21 @@ function loadModel({ format = "gltf", path }) {
 			console.log("----");
 			break;
 	}
-	return new Promise((resolve) => {
-		loader.load(path, function (res) {
-			console.log(path, res);
-			resolve(res);
-		});
+	return new Promise((resolve, reject) => {
+		loader.load(
+			path,
+			function (res) {
+				console.log(path, res);
+				resolve(res);
+			},
+			function (progress) {
+				console.log("progress", progress);
+			}, // onProgress
+			function (error) {
+				// err
+				reject(error);
+			}
+		);
 	});
 }
 
