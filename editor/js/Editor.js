@@ -6,12 +6,15 @@ import { History as _History } from "./History.js";
 import { Strings } from "./Strings.js";
 import { Storage as _Storage } from "./Storage.js";
 
-// var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
-var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 1000);
-_DEFAULT_CAMERA.name = "Camera";
-_DEFAULT_CAMERA.position.set(0, 5, 10);
-_DEFAULT_CAMERA.lookAt(new THREE.Vector3());
-
+const initCamera = function () {
+	// var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
+	var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 1000);
+	_DEFAULT_CAMERA.name = "Camera";
+	_DEFAULT_CAMERA.position.set(0, 50, 50);
+	_DEFAULT_CAMERA.lookAt(new THREE.Vector3());
+	return _DEFAULT_CAMERA;
+};
+const _DEFAULT_CAMERA = initCamera();
 function Editor() {
 	var Signal = signals.Signal;
 
@@ -122,6 +125,7 @@ function Editor() {
 }
 
 Editor.prototype = {
+	initCamera,
 	setScene: function (scene) {
 		this.scene.uuid = scene.uuid;
 		this.scene.name = scene.name;

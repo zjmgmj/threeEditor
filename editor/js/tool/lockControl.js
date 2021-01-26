@@ -57,6 +57,7 @@ LockControls.prototype.start = function () {
 		// pointerLockControls = viewport.prototype.controls
 		pointerLockControls.getObject().position.y = 0;
 		pointerLockControls.getObject().position.x = 0;
+		pointerLockControls.getObject().position.z = 10;
 		scene.add(pointerLockControls.getObject());
 		var onKeyDown = function (event) {
 			switch (event.keyCode) {

@@ -78,6 +78,11 @@ function Index() {
 		const dom = document.getElementById("viewport");
 		dom.removeEventListener("click", ranging);
 		switch (flag) {
+			case "0":
+				// editor.camera = editor.initCamera().clone();
+				toolBar.cameraReset.reset();
+				$(".toolbar").removeClass("active");
+				break;
 			case "1":
 				// 测距
 				toolBar.modelNode.hide();
