@@ -11,7 +11,7 @@ CameraReset.prototype = {
 		this.editor.camera.lookAt(new THREE.Vector3());
 		this.editor.viewportCamera.position.set(0, 50, 50);
 		this.editor.viewportCamera.lookAt(new THREE.Vector3());
-		this.viewport.render();
+		this.editor.focus(this.editor.scene);
 	},
 };
 export default CameraReset;

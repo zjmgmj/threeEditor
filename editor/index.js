@@ -146,6 +146,7 @@ function Index() {
 		.then((res) => {
 			const model = res.scenes[0];
 			editor.addObject(model);
+			toolBar.cameraReset.reset();
 		})
 		.catch((err) => {
 			console.error("error-->>", err);
