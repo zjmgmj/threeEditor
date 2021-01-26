@@ -4,7 +4,7 @@ function Config() {
 	var storage = {
 		language: "zh",
 		exportPrecision: 6,
-
+		isHelper: false,
 		autosave: true,
 
 		"project/title": "",

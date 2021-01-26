@@ -158,7 +158,7 @@ Editor.prototype = {
 			if (child.material !== undefined) scope.addMaterial(child.material);
 
 			scope.addCamera(child);
-			scope.addHelper(child);
+			if (scope.config.isHelper) scope.addHelper(child);
 		});
 		if (parent === undefined) {
 			this.scene.add(object);
