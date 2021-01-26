@@ -8,7 +8,8 @@ import { Resizer } from "./js/Resizer.js";
 // import { VRButton } from "examples/jsm/webxr/VRButton.js";
 
 import { Tool } from "./js/tool/index.js";
-import { loadModel } from "./js/tool/load.js";
+import Contextmenu from "./js/contextMenu/index.js"; // 右击菜单
+import { loadModel, $get } from "./js/tool/load.js";
 
 function Index() {
 	window.URL = window.URL || window.webkitURL;
@@ -44,6 +45,7 @@ function Index() {
 	const resizer = new Resizer(editor);
 	document.body.appendChild(resizer.dom);
 
+	const contextmenu = new Contextmenu(editor, viewport); // 右击菜单
 	const toolBar = new Tool(editor, viewport); // 底部工具栏
 
 	function onWindowResize() {
@@ -112,7 +114,6 @@ function Index() {
 				break;
 		}
 	}
-	// loadModel({ path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json", format: "json" });
 	// loadModel({
 	// 	path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/0a4e4806-c09a-416f-8065-4e1cbcf39bc6.gltf",
 	// }).then((res) => {
@@ -131,11 +132,11 @@ function Index() {
 	// 	const model = res.scenes[0];
 	// 	editor.addObject(model);
 	// });
-	// $.get("../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json", function (res) {
-	// 	debugger;
-	// 	console.log(res);
-	// 	loadJson(res.children);
-	// });
+	$get("/models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json").then((res) => {
+		debugger;
+		console.log("gimJson", res);
+		toolBar.modelNode.refreshUI(res.children);
+	});
 	loadModel({ path: "../models/gltf/3d.gltf" })
 		.then((res) => {
 			const model = res.scenes[0];

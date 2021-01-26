@@ -1,4 +1,4 @@
-import { UIPanel } from "../../libs/ui.js";
+import { UIPanel } from "../libs/ui.js";
 function ClearRanging(editor, viewpoint) {
 	this.editor = editor;
 	this.viewpoint = viewpoint;

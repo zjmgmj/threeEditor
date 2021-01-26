@@ -442,16 +442,17 @@ Editor.prototype = {
 	//
 
 	select: function (object) {
-		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial.clone();
+		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial?.clone();
 		if (this.selected === object) return;
 
 		var uuid = null;
-
 		if (object !== null) {
 			uuid = object.uuid;
-			const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
-			object.originalMaterial = object.material.clone();
-			object.material = material;
+			if (object.material) {
+				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
+				object.originalMaterial = object.material?.clone() || null;
+				object.material = material;
+			}
 		}
 
 		this.selected = object;

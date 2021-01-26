@@ -1,4 +1,4 @@
-import { UIPanel } from "../../libs/ui.js";
+import { UIPanel } from "../libs/ui.js";
 function clearSelect(editor, callback = () => {}) {
 	const _self = this;
 	const container = new UIPanel();

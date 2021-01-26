@@ -1,6 +1,6 @@
-import * as THREE from "../../../libs/three.module.js"; // 引用基本的three.js库
-import { UIPanel } from "../../libs/ui.js";
-import Base from "../base.js";
+import * as THREE from "../../libs/three.module.js"; // 引用基本的three.js库
+import { UIPanel } from "../libs/ui.js";
+import Base from "../tool/base.js";
 
 function Label(editor, callback = () => {}) {
 	const _self = this;
