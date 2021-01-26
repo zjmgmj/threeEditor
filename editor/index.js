@@ -136,7 +136,7 @@ function Index() {
 	// 	console.log(res);
 	// 	loadJson(res.children);
 	// });
-	loadModel({ path: "../models/gltf/3d.gltf" })
+	loadModel({ path: "../models/gltf/ff65b48e-4489-40e3-945a-455848c800e4.gltf" })
 		.then((res) => {
 			const model = res.scenes[0];
 			editor.addObject(model);
