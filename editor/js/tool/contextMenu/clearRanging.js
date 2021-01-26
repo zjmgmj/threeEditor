@@ -30,7 +30,7 @@ ClearRanging.prototype = {
 				ids.push(item.id);
 			}
 		}
-		this.editor.removeAll();
+		this.editor.removeAll(ids);
 	},
 	clickEvent: function () {
 		console.log("清除");
