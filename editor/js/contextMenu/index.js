@@ -115,7 +115,7 @@ function Contextmenu(editor, viewport) {
 	function isTrajector() {
 		const list = editor.scene.children;
 		const isTrajector = list.find((item) => {
-			return item.constructor.name === "Group" && item.name.indexOf("temp_轨迹") === 0;
+			return item.constructor.name === "Group" && item.name.indexOf("temp_trajector") === 0;
 		});
 		return isTrajector;
 	}

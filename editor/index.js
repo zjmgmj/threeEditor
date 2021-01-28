@@ -100,8 +100,19 @@ function Index() {
 				$(".toolbar").removeClass("active");
 				dom.addClass("active");
 				const lockControl = new toolBar.LockControl(editor, viewport);
-				const trajector = editor.trajector;
-				lockControl.start({ trajector, speed: 0.8 }).unlockAfter = () => {
+				// const trajector = editor.trajector;
+				const trajectorGroup = editor.scene.getChildByName("temp_trajector");
+				const trajector = [];
+				for (let i = 0; i < trajectorGroup.children.length; i++) {
+					const item = trajectorGroup.children[i];
+					if (item.constructor.name === "CSS2DObject") {
+						const point = new THREE.Vector3();
+						point.copy(item.position);
+						point.y += 1;
+						trajector.push(point);
+					}
+				}
+				lockControl.start({ trajector, speed: 1 }).unlockAfter = () => {
 					dom.removeClass("active");
 				};
 				break;
