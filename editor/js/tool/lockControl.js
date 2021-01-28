@@ -1,5 +1,6 @@
 import * as THREE from "../../libs/three.module.js";
 import { PointerLockControls } from "../../libs/jsm/controls/PointerLockControls.js";
+// import Base from "./base.js";
 function LockControls(editor, viewport) {
 	// -------------------
 	// const _self = this;
@@ -8,7 +9,7 @@ function LockControls(editor, viewport) {
 	return this;
 }
 
-LockControls.prototype.start = function () {
+LockControls.prototype.start = function ({ trajector = [], speed = 0.5 }) {
 	const { viewport, editor } = this;
 	const _self = this;
 	let { container, render } = viewport;
@@ -33,89 +34,123 @@ LockControls.prototype.start = function () {
 	var direction = new THREE.Vector3(); //移动的方向变量
 	var rotation = new THREE.Vector3(); //当前的相机朝向
 
-	var speed = 60; //控制器移动速度
+	var controlSpeed = 60; //控制器移动速度
 	var upSpeed = 100; //控制跳起时的速度
 	var clock = new THREE.Clock(); // only used for animations
+	let mixer = null;
 	function initPointerLock() {
 		//实现鼠标锁定的教程地址 http://www.html5rocks.com/en/tutorials/pointerlock/intro/
+		// !trajector.length
 		pointerLockControls.enabled = true;
+		console.log("--------------lock");
 		dom.requestPointerLock = dom.requestPointerLock || dom.mozRequestPointerLock || dom.webkitRequestPointerLock;
 		dom.requestPointerLock();
-		controlsEnabled = true;
+		controlsEnabled = !trajector.length;
 		pointerLockControls.addEventListener("unlock", unlock);
 	}
-	initControls();
-	initPointerLock();
-	viewport.prototype.controls = pointerLockControls;
-	viewport.prototype.animate = () => {
-		requestAnimationFrame(viewport.prototype.animate);
-		renderControl();
-		render();
-	};
 	function initControls() {
 		pointerLockControls = new PointerLockControls(editor.camera, dom);
-		// pointerLockControls = viewport.prototype.controls
-		pointerLockControls.getObject().position.y = 0;
-		pointerLockControls.getObject().position.x = 0;
-		pointerLockControls.getObject().position.z = 10;
-		scene.add(pointerLockControls.getObject());
-		var onKeyDown = function (event) {
-			switch (event.keyCode) {
-				case 38: // up
-				case 87: // w
-					moveForward = true;
-					break;
-				case 37: // left
-				case 65: // a
-					moveLeft = true;
-					break;
-				case 40: // down
-				case 83: // s
-					moveBackward = true;
-					break;
-				case 39: // right
-				case 68: // d
-					moveRight = true;
-					break;
-				case 32: // space
-					if (canJump && spaceUp) velocity.y += upSpeed;
-					canJump = false;
-					spaceUp = false;
-					break;
+		if (!trajector.length) {
+			// pointerLockControls = viewport.prototype.controls
+			pointerLockControls.getObject().position.y = 0;
+			pointerLockControls.getObject().position.x = 0;
+			pointerLockControls.getObject().position.z = 10;
+			scene.add(pointerLockControls.getObject());
+			var onKeyDown = function (event) {
+				switch (event.keyCode) {
+					case 38: // up
+					case 87: // w
+						moveForward = true;
+						break;
+					case 37: // left
+					case 65: // a
+						moveLeft = true;
+						break;
+					case 40: // down
+					case 83: // s
+						moveBackward = true;
+						break;
+					case 39: // right
+					case 68: // d
+						moveRight = true;
+						break;
+					case 32: // space
+						if (canJump && spaceUp) velocity.y += upSpeed;
+						canJump = false;
+						spaceUp = false;
+						break;
+				}
+			};
+			var onKeyUp = function (event) {
+				switch (event.keyCode) {
+					case 38: // up
+					case 87: // w
+						moveForward = false;
+						break;
+					case 37: // left
+					case 65: // a
+						moveLeft = false;
+						break;
+					case 40: // down
+					case 83: // s
+						moveBackward = false;
+						break;
+					case 39: // right
+					case 68: // d
+						moveRight = false;
+						break;
+					case 32: // space
+						spaceUp = true;
+						break;
+					default:
+						console.log("取消");
+						break;
+				}
+			};
+			document.addEventListener("keydown", onKeyDown, false);
+			document.addEventListener("keyup", onKeyUp, false);
+		} else {
+			pointerLockControls.getObject().position.copy(trajector[0]);
+			scene.add(pointerLockControls.getObject());
+			console.log("----------------------------------自动移动", trajector);
+			// 自动移动
+			// const testBox = Base.createBox({ size: { x: 10, y: 10, z: 10 } });
+			// testBox.name = "testBox";
+			// testBox.position.copy(trajector[0]);
+			// scene.add(testBox);
+			let endTime = 0;
+			const times = [0];
+			const positions = [...trajector[0].toArray()];
+			for (let i = 1; i < trajector.length; i++) {
+				const point = trajector[i];
+				const prevPoint = trajector[i - 1];
+				const length = prevPoint.distanceTo(point);
+				endTime += length * speed;
+				times.push(endTime);
+				positions.push(...point.toArray());
 			}
-		};
-		var onKeyUp = function (event) {
-			switch (event.keyCode) {
-				case 38: // up
-				case 87: // w
-					moveForward = false;
-					break;
-				case 37: // left
-				case 65: // a
-					moveLeft = false;
-					break;
-				case 40: // down
-				case 83: // s
-					moveBackward = false;
-					break;
-				case 39: // right
-				case 68: // d
-					moveRight = false;
-					break;
-				case 32: // space
-					spaceUp = true;
-					break;
-				default:
-					console.log("取消");
-					break;
-			}
-		};
-		document.addEventListener("keydown", onKeyDown, false);
-		document.addEventListener("keyup", onKeyUp, false);
+			// 创建关键帧轨道
+			const track = new THREE.KeyframeTrack(
+				"Camera.position", // 指定对象中的变形目标为Y轴旋转属性
+				times, // 关键帧的时间数组
+				Float32Array.from(positions) // 与时间数组中的时间点相关的值组成的数组
+			);
+			const duration = times[times.length - 1];
+			const clip = new THREE.AnimationClip(
+				"Camera", // 此剪辑的名称
+				duration, // 如果传入负数，持续时间将会从传入的数组中计算得到
+				[track] // 一个由关键帧轨道（KeyframeTracks）组成的数组。
+			);
+			clip.clampWhenFinished = true;
+			mixer = editor.mixer.clipAction(clip);
+			mixer.clampWhenFinished = true;
+			mixer.loop = THREE.LoopOnce;
+			mixer.play();
+		}
 	}
 	function renderControl() {
 		const minCameraY = 1;
-		if (controlsEnabled === true) {
+		if (controlsEnabled) {
 			//获取到控制器对象
 			var control = pointerLockControls.getObject();
 			//获取刷新时间
@@ -173,8 +208,8 @@ LockControls.prototype.start = function () {
 			// 	if (moveForward || moveBackward) velocity.z -= direction.z * speed * delta;
 			// 	if (moveLeft || moveRight) velocity.x -= direction.x * speed * delta;
 			// }
-			if (moveForward || moveBackward) velocity.z -= direction.z * speed * delta;
-			if (moveLeft || moveRight) velocity.x -= direction.x * speed * delta;
+			if (moveForward || moveBackward) velocity.z -= direction.z * controlSpeed * delta;
+			if (moveLeft || moveRight) velocity.x -= direction.x * controlSpeed * delta;
 
 			//复制相机的位置
 			downRaycaster.ray.origin.copy(control.position);
@@ -202,11 +237,29 @@ LockControls.prototype.start = function () {
 		}
 	}
 	function unlock() {
-		viewport.prototype.animate = animate;
+		if (controlsEnabled) viewport.prototype.animate = animate;
+		if (mixer) {
+			mixer.stop();
+			editor.mixer._removeInactiveAction(mixer);
+			mixer = null;
+		}
 		viewport.prototype.controls = controls;
 		pointerLockControls.removeEventListener("unlock", unlock);
-		_self.unlockAfter();
+		setTimeout(() => {
+			_self.unlockAfter();
+		}, 2000);
 	}
+	initControls();
+	initPointerLock();
+	viewport.prototype.controls = pointerLockControls;
+	controlsEnabled
+		? (viewport.prototype.animate = () => {
+				requestAnimationFrame(viewport.prototype.animate);
+				renderControl();
+				render();
+		  })
+		: viewport.render();
+
 	return this;
 };
 

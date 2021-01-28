@@ -664,11 +664,9 @@ function Viewport(
 		}
 
 		if (viewHelper.animating === true) {
-			console.log("viewHelper.animating", viewHelper.animating);
 			viewHelper.update(delta);
 			needsUpdate = true;
 		}
-		console.log("needsUpdate", needsUpdate);
 		if (needsUpdate === true) render();
 	};
 	requestAnimationFrame(_self.animate);

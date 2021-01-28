@@ -144,7 +144,6 @@ function EditorControls(object, domElement) {
 	// mouse
 
 	function onMouseDown(event) {
-		debugger;
 		console.log("button", event.button);
 		if (event.button === 0) {
 			// 左键

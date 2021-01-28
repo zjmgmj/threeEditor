@@ -42,7 +42,7 @@ function Draw(editor) {
 	function rangingSpot({ position, parent, name }) {
 		const dom = document.createElement("div");
 		dom.className = "spot";
-		const id = `spot_${Math.random() * 100}`;
+		const id = name;
 		dom.innerHTML = `<div class="del-spot" id="${id}">删除</div>`;
 		base.createLabel({
 			dom,

@@ -31,6 +31,7 @@ function Index() {
 		optionPanel: false,
 		infoShow: false,
 		axisHelperShow: false,
+		gridShow: false,
 	};
 	const viewport = new Viewport(editor, config);
 	console.log(viewport);
@@ -56,7 +57,8 @@ function Index() {
 
 	$(".toolbar").on("click", function (e) {
 		// $(".toolbar").removeClass("active");
-		$(this).addClass("active");
+		// if ($(this).hasClass("active")) return false;
+		// $(this).addClass("active");
 		const flag = this.getAttribute("data-flag");
 		tool(flag, e);
 	});
@@ -81,7 +83,7 @@ function Index() {
 			case "0":
 				// editor.camera = editor.initCamera().clone();
 				toolBar.cameraReset.reset();
-				$(".toolbar").removeClass("active");
+				// $(".toolbar").removeClass("active");
 				break;
 			case "1":
 				// 测距
@@ -93,25 +95,36 @@ function Index() {
 				break;
 			case "2":
 				// 视角切换
+				if ($("#visualAngleTool").hasClass("active")) return false;
 				toolBar.modelNode.hide();
 				toolBar.modelDetail.hide();
 				$(".toolbar").removeClass("active");
 				$("#visualAngleTool").addClass("active");
 				const lockControl = new toolBar.LockControl(editor, viewport);
-				lockControl.start().unlockAfter = () => {
+				const trajector = editor.trajector;
+				lockControl.start({ trajector, speed: 0.8 }).unlockAfter = () => {
 					$("#visualAngleTool").removeClass("active");
 				};
 				break;
 			case "3":
 				// 模型节点
+				$("#nodeTool").addClass("active");
 				toolBar.modelNode.toggle().hideAfter = () => {
 					$("#nodeTool").removeClass("active");
 				};
 				break;
 			case "4":
 				// 查看模型详情
+				$("#detailTool").addClass("active");
 				toolBar.modelDetail.toggle().hideAfter = () => {
 					$("#detailTool").removeClass("active");
+				};
+				break;
+			case "5":
+				// 轨迹
+				$("#trajectorTool").addClass("active");
+				toolBar.trajector.start().endAfter = () => {
+					$("#trajectorTool").removeClass("active");
 				};
 				break;
 			default:
@@ -138,7 +151,6 @@ function Index() {
 	// 	editor.addObject(model);
 	// });
 	$get("/models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json").then((res) => {
-		debugger;
 		console.log("gimJson", res);
 		toolBar.modelNode.refreshUI(res.children);
 	});
