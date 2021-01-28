@@ -103,13 +103,15 @@ function Index() {
 				// const trajector = editor.trajector;
 				const trajectorGroup = editor.scene.getChildByName("temp_trajector");
 				const trajector = [];
-				for (let i = 0; i < trajectorGroup.children.length; i++) {
-					const item = trajectorGroup.children[i];
-					if (item.constructor.name === "CSS2DObject") {
-						const point = new THREE.Vector3();
-						point.copy(item.position);
-						point.y += 1;
-						trajector.push(point);
+				if (trajectorGroup) {
+					for (let i = 0; i < trajectorGroup.children.length; i++) {
+						const item = trajectorGroup.children[i];
+						if (item.constructor.name === "CSS2DObject") {
+							const point = new THREE.Vector3();
+							point.copy(item.position);
+							point.y += 1;
+							trajector.push(point);
+						}
 					}
 				}
 				lockControl.start({ trajector, speed: 1 }).unlockAfter = () => {
