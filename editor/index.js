@@ -31,7 +31,7 @@ function Index() {
 		optionPanel: false,
 		infoShow: false,
 		axisHelperShow: false,
-		gridShow: false,
+		gridShow: true,
 	};
 	const viewport = new Viewport(editor, config);
 	console.log(viewport);
