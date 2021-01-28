@@ -1,5 +1,5 @@
 import * as THREE from "../libs/three.module.js";
-
+import Stats from "../libs/jsm/libs/stats.module.js";
 import { TransformControls } from "../libs/jsm/controls/TransformControls.js"; // 变换控件
 
 import { UIPanel } from "./libs/ui.js";
@@ -25,6 +25,7 @@ function Viewport(
 		infoShow: true, // 场景左下角显示信息
 		axisHelperShow: true, // 辅助坐标
 		gridShow: true, // 网格
+		stats: true,
 	}
 ) {
 	const _self = this;
@@ -38,6 +39,12 @@ function Viewport(
 	if (config.infoShow) container.add(new ViewportInfo(editor)); // 场景左下角显示信息
 	// let  = container.dom;
 	//
+
+	const stats = new Stats();
+	if (config.stats) {
+		stats.showPanel(0);
+		container.dom.appendChild(stats.dom);
+	}
 
 	var renderer = null;
 	var labelRenderer = null;
@@ -653,6 +660,7 @@ function Viewport(
 
 	this.animate = function () {
 		requestAnimationFrame(_self.animate);
+		stats.begin();
 		var mixer = editor.mixer;
 		var delta = clock.getDelta();
 
@@ -668,6 +676,7 @@ function Viewport(
 			needsUpdate = true;
 		}
 		if (needsUpdate === true) render();
+		stats.end();
 	};
 	requestAnimationFrame(_self.animate);
 

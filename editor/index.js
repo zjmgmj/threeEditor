@@ -29,9 +29,10 @@ function Index() {
 		labelRenderer: true,
 		transformControlsShow: false,
 		optionPanel: false,
-		infoShow: false,
-		axisHelperShow: false,
-		gridShow: true,
+		infoShow: false, // 左下角信息显示
+		axisHelperShow: false, //坐标辅助
+		gridShow: false, // 网格
+		stats: true, // 性能显示
 	};
 	const viewport = new Viewport(editor, config);
 	console.log(viewport);
