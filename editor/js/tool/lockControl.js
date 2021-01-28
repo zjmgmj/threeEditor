@@ -48,6 +48,63 @@ LockControls.prototype.start = function ({ trajector = [], speed = 0.5 }) {
 		controlsEnabled = !trajector.length;
 		pointerLockControls.addEventListener("unlock", unlock);
 	}
+	function onKeyDown(event) {
+		switch (event.keyCode) {
+			case 38: // up
+			case 87: // w
+				moveForward = true;
+				break;
+			case 37: // left
+			case 65: // a
+				moveLeft = true;
+				break;
+			case 40: // down
+			case 83: // s
+				moveBackward = true;
+				break;
+			case 39: // right
+			case 68: // d
+				moveRight = true;
+				break;
+			case 32: // space
+				debugger;
+				if (!trajector.length) {
+					if (canJump && spaceUp) velocity.y += upSpeed;
+					canJump = false;
+					spaceUp = false;
+				} else {
+					console.log("----------------paused");
+					mixer.paused = !mixer.paused;
+				}
+				break;
+		}
+	}
+	function onKeyUp(event) {
+		switch (event.keyCode) {
+			case 38: // up
+			case 87: // w
+				moveForward = false;
+				break;
+			case 37: // left
+			case 65: // a
+				moveLeft = false;
+				break;
+			case 40: // down
+			case 83: // s
+				moveBackward = false;
+				break;
+			case 39: // right
+			case 68: // d
+				moveRight = false;
+				break;
+			case 32: // space
+				spaceUp = true;
+				break;
+			default:
+				console.log("取消");
+				break;
+		}
+	}
 	function initControls() {
 		pointerLockControls = new PointerLockControls(editor.camera, dom);
 		if (!trajector.length) {
@@ -56,57 +113,6 @@ LockControls.prototype.start = function ({ trajector = [], speed = 0.5 }) {
 			pointerLockControls.getObject().position.x = 0;
 			pointerLockControls.getObject().position.z = 10;
 			scene.add(pointerLockControls.getObject());
-			var onKeyDown = function (event) {
-				switch (event.keyCode) {
-					case 38: // up
-					case 87: // w
-						moveForward = true;
-						break;
-					case 37: // left
-					case 65: // a
-						moveLeft = true;
-						break;
-					case 40: // down
-					case 83: // s
-						moveBackward = true;
-						break;
-					case 39: // right
-					case 68: // d
-						moveRight = true;
-						break;
-					case 32: // space
-						if (canJump && spaceUp) velocity.y += upSpeed;
-						canJump = false;
-						spaceUp = false;
-						break;
-				}
-			};
-			var onKeyUp = function (event) {
-				switch (event.keyCode) {
-					case 38: // up
-					case 87: // w
-						moveForward = false;
-						break;
-					case 37: // left
-					case 65: // a
-						moveLeft = false;
-						break;
-					case 40: // down
-					case 83: // s
-						moveBackward = false;
-						break;
-					case 39: // right
-					case 68: // d
-						moveRight = false;
-						break;
-					case 32: // space
-						spaceUp = true;
-						break;
-					default:
-						console.log("取消");
-						break;
-				}
-			};
 			document.addEventListener("keydown", onKeyDown, false);
 			document.addEventListener("keyup", onKeyUp, false);
 		} else {
@@ -146,6 +152,7 @@ LockControls.prototype.start = function ({ trajector = [], speed = 0.5 }) {
 			mixer.clampWhenFinished = true;
 			mixer.loop = THREE.LoopOnce;
 			mixer.play();
+			document.addEventListener("keydown", onKeyDown, false);
 		}
 	}
 	function renderControl() {
@@ -244,6 +251,8 @@ LockControls.prototype.start = function ({ trajector = [], speed = 0.5 }) {
 			mixer = null;
 		}
 		viewport.prototype.controls = controls;
+		document.removeEventListener("keydown", onKeyDown, false);
+		document.removeEventListener("keyup", onKeyUp, false);
 		pointerLockControls.removeEventListener("unlock", unlock);
 		setTimeout(() => {
 			_self.unlockAfter();

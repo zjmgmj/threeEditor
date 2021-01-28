@@ -60,7 +60,7 @@ function Index() {
 		// if ($(this).hasClass("active")) return false;
 		// $(this).addClass("active");
 		const flag = this.getAttribute("data-flag");
-		tool(flag, e);
+		tool(flag, $(this));
 	});
 	function ranging(e) {
 		// 测距
@@ -76,55 +76,53 @@ function Index() {
 			$("#rangingTool").removeClass("active");
 		});
 	}
-	function tool(flag) {
-		const dom = document.getElementById("viewport");
-		dom.removeEventListener("click", ranging);
+	function tool(flag, dom) {
+		const viewportDom = document.getElementById("viewport");
+		viewportDom.removeEventListener("click", ranging);
 		switch (flag) {
 			case "0":
-				// editor.camera = editor.initCamera().clone();
 				toolBar.cameraReset.reset();
-				// $(".toolbar").removeClass("active");
 				break;
 			case "1":
 				// 测距
 				toolBar.modelNode.hide();
 				toolBar.modelDetail.hide();
 				$(".toolbar").removeClass("active");
-				$("#rangingTool").addClass("active");
-				dom.addEventListener("click", ranging);
+				dom.addClass("active");
+				viewportDom.addEventListener("click", ranging);
 				break;
 			case "2":
 				// 视角切换
-				if ($("#visualAngleTool").hasClass("active")) return false;
+				if (dom.hasClass("active")) return false;
 				toolBar.modelNode.hide();
 				toolBar.modelDetail.hide();
 				$(".toolbar").removeClass("active");
-				$("#visualAngleTool").addClass("active");
+				dom.addClass("active");
 				const lockControl = new toolBar.LockControl(editor, viewport);
 				const trajector = editor.trajector;
 				lockControl.start({ trajector, speed: 0.8 }).unlockAfter = () => {
-					$("#visualAngleTool").removeClass("active");
+					dom.removeClass("active");
 				};
 				break;
 			case "3":
 				// 模型节点
-				$("#nodeTool").addClass("active");
+				dom.addClass("active");
 				toolBar.modelNode.toggle().hideAfter = () => {
-					$("#nodeTool").removeClass("active");
+					dom.removeClass("active");
 				};
 				break;
 			case "4":
 				// 查看模型详情
-				$("#detailTool").addClass("active");
+				dom.addClass("active");
 				toolBar.modelDetail.toggle().hideAfter = () => {
-					$("#detailTool").removeClass("active");
+					dom.removeClass("active");
 				};
 				break;
 			case "5":
 				// 轨迹
-				$("#trajectorTool").addClass("active");
+				dom.addClass("active");
 				toolBar.trajector.start().endAfter = () => {
-					$("#trajectorTool").removeClass("active");
+					dom.removeClass("active");
 				};
 				break;
 			default:
