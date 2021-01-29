@@ -23,6 +23,7 @@ function Index() {
 
 	window.editor = editor; // Expose editor to Console
 	window.THREE = THREE; // Expose THREE to APP Scripts and Console
+	window.loadModel = loadModel;
 
 	const config = {
 		sidebar: false,
@@ -48,7 +49,7 @@ function Index() {
 	document.body.appendChild(resizer.dom);
 
 	const contextmenu = new Contextmenu(editor, viewport); // 右击菜单
-	const toolBar = new Tool(editor, viewport); // 底部工具栏
+	const toolBar = window.toolBar = new Tool(editor, viewport); // 底部工具栏
 
 	function onWindowResize() {
 		editor.signals.windowResize.dispatch();
