@@ -136,12 +136,14 @@ function Index() {
 	// 	console.log(res);
 	// 	loadJson(res.children);
 	// });
-	loadModel({ path: "../models/gltf/ff65b48e-4489-40e3-945a-455848c800e4.gltf" })
+	loadModel({ path: "../models/gltf/0a4e4806-c09a-416f-8065-4e1cbcf39bc6.gltf" })
 		.then((res) => {
 			const model = res.scenes[0];
+			debugger
 			editor.addObject(model);
 		})
 		.catch((err) => {
+			debugger
 			console.error("error-->>", err);
 		});
 }
