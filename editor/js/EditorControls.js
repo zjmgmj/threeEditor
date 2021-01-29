@@ -150,11 +150,11 @@ function EditorControls(object, domElement) {
 			state = STATE.ROTATE;
 		} else if (event.button === 1) {
 			// 中键
-			// state = STATE.ZOOM;
-			state = STATE.PAN;
+			 state = STATE.ZOOM;
+			//state = STATE.PAN;
 		} else if (event.button === 2) {
 			// 右键
-			// state = STATE.PAN;
+			 state = STATE.PAN;
 			return false;
 		}
 
