@@ -2,6 +2,7 @@ import Draw from "./draw.js";
 import Base from "./base.js";
 import * as THREE from "../../libs/three.module.js";
 function Ranging(editor) {
+	// 测距
 	const _self = this;
 	const draw = new Draw(editor);
 	let lineStartPoint = null;

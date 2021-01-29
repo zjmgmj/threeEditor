@@ -6,12 +6,15 @@ import { History as _History } from "./History.js";
 import { Strings } from "./Strings.js";
 import { Storage as _Storage } from "./Storage.js";
 
-// var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
-var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 1000);
-_DEFAULT_CAMERA.name = "Camera";
-_DEFAULT_CAMERA.position.set(0, 5, 10);
-_DEFAULT_CAMERA.lookAt(new THREE.Vector3());
-
+const initCamera = function () {
+	// var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
+	var _DEFAULT_CAMERA = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.01, 1000);
+	_DEFAULT_CAMERA.name = "Camera";
+	_DEFAULT_CAMERA.position.set(0, 50, 50);
+	_DEFAULT_CAMERA.lookAt(new THREE.Vector3());
+	return _DEFAULT_CAMERA;
+};
+const _DEFAULT_CAMERA = initCamera();
 function Editor() {
 	var Signal = signals.Signal;
 
@@ -122,6 +125,7 @@ function Editor() {
 }
 
 Editor.prototype = {
+	initCamera,
 	setScene: function (scene) {
 		this.scene.uuid = scene.uuid;
 		this.scene.name = scene.name;
@@ -154,7 +158,7 @@ Editor.prototype = {
 			if (child.material !== undefined) scope.addMaterial(child.material);
 
 			scope.addCamera(child);
-			scope.addHelper(child);
+			if (scope.config.isHelper) scope.addHelper(child);
 		});
 		if (parent === undefined) {
 			this.scene.add(object);
@@ -442,16 +446,17 @@ Editor.prototype = {
 	//
 
 	select: function (object) {
-		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial.clone();
+		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial?.clone();
 		if (this.selected === object) return;
 
 		var uuid = null;
-
 		if (object !== null) {
 			uuid = object.uuid;
-			const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
-			object.originalMaterial = object.material.clone();
-			object.material = material;
+			if (object.material) {
+				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
+				object.originalMaterial = object.material?.clone() || null;
+				object.material = material;
+			}
 		}
 
 		this.selected = object;

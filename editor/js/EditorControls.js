@@ -144,12 +144,18 @@ function EditorControls(object, domElement) {
 	// mouse
 
 	function onMouseDown(event) {
+		console.log("button", event.button);
 		if (event.button === 0) {
+			// 左键
 			state = STATE.ROTATE;
 		} else if (event.button === 1) {
-			state = STATE.ZOOM;
-		} else if (event.button === 2) {
+			// 中键
+			// state = STATE.ZOOM;
 			state = STATE.PAN;
+		} else if (event.button === 2) {
+			// 右键
+			// state = STATE.PAN;
+			return false;
 		}
 
 		pointerOld.set(event.clientX, event.clientY);

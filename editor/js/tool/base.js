@@ -101,4 +101,19 @@ function getRay({ startPoint, endPoint, model }) {
 	return intersects;
 }
 
-export default { screenToWorld, createLabel, getRay, removeLabel, tempNameTag };
+function createBox({ size = null, material = null }) {
+	size = size || { x: 0.5, y: 0.5, z: 0.5 };
+	material = material || { color: 0xff0000 };
+	const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+	const basicMaterial = new THREE.MeshBasicMaterial(material);
+	const box = new THREE.Mesh(geometry, basicMaterial);
+	return box;
+}
+function showCenter(group) {
+	const center = this.createBox({});
+	center.position.set(0, 0, 0);
+	center.name = "中心点";
+	group.add(center);
+}
+
+export default { screenToWorld, createLabel, getRay, removeLabel, tempNameTag, createBox, showCenter };

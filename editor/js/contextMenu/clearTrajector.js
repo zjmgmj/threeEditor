@@ -1,12 +1,15 @@
-import { UIPanel } from "../../libs/ui.js";
-function ClearRanging(editor, viewpoint) {
+/**
+ * 清除轨迹
+ */
+import { UIPanel } from "../libs/ui.js";
+function ClearTrajector(editor, viewpoint) {
 	this.editor = editor;
 	this.viewpoint = viewpoint;
 	return this;
 }
 
-ClearRanging.prototype = {
-	constructor: ClearRanging,
+ClearTrajector.prototype = {
+	constructor: ClearTrajector,
 	init: function () {
 		this.panel();
 		return this;
@@ -16,7 +19,7 @@ ClearRanging.prototype = {
 		const _self = this;
 		const container = new UIPanel();
 		container.setClass("title");
-		container.setTextContent("清除测距");
+		container.setTextContent("清除轨迹");
 		container.onClick(_self.clickEvent());
 		this.container = container;
 		return this;
@@ -26,17 +29,18 @@ ClearRanging.prototype = {
 		const ids = [];
 		for (let i = 0; i < list.length; i++) {
 			const item = list[i];
-			if (item.constructor.name === "Group" && item.name.indexOf("temp_测距") === 0) {
+			if (item.constructor.name === "Group" && item.name.indexOf("temp_trajector") === 0) {
 				ids.push(item.id);
 			}
 		}
 		this.editor.removeAll(ids);
+		// this.editor.trajector = [];
+		this.editor.isTrajector = false;
 	},
 	clickEvent: function () {
 		console.log("清除");
 		return () => {
 			this.clear();
-
 			this.clickAfter();
 			return this;
 		};
@@ -44,4 +48,4 @@ ClearRanging.prototype = {
 	clickAfter: function () {},
 };
 
-export default ClearRanging;
+export default ClearTrajector;

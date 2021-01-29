@@ -42,7 +42,7 @@ function Draw(editor) {
 	function rangingSpot({ position, parent, name }) {
 		const dom = document.createElement("div");
 		dom.className = "spot";
-		const id = `spot_${Math.random() * 100}`;
+		const id = name;
 		dom.innerHTML = `<div class="del-spot" id="${id}">删除</div>`;
 		base.createLabel({
 			dom,
@@ -54,7 +54,8 @@ function Draw(editor) {
 		document.getElementById(id).addEventListener("click", (e) => {
 			const spotModel = parent.getObjectByName(name);
 			editor.removeObject(spotModel, parent);
-			let idx = Number(name.split("_")[2]);
+			const names = name.split("_");
+			let idx = Number(names[names.length - 1]);
 
 			if (idx === 0) {
 				removeRangingSpot(parent, idx);
@@ -63,6 +64,16 @@ function Draw(editor) {
 				ids.map((num) => {
 					removeRangingSpot(parent, num);
 				});
+				const lineModelNext = parent.getObjectByName(`${base.tempNameTag}line_${idx + 1}`);
+				if (!lineModelNext) {
+					const spotModel = parent.getObjectByName(`${base.tempNameTag}spot_${idx + 1}`);
+					if (spotModel) editor.removeObject(spotModel, parent);
+				}
+				const lineModelPrev = parent.getObjectByName(`${base.tempNameTag}line_${idx - 2}`);
+				if (!lineModelPrev) {
+					const spotModel = parent.getObjectByName(`${base.tempNameTag}spot_${idx - 1}`);
+					if (spotModel) editor.removeObject(spotModel, parent);
+				}
 			}
 		});
 	}
@@ -75,12 +86,7 @@ function Draw(editor) {
 		if (lineModel) {
 			editor.removeObject(lineModel, parent);
 			const labelModel = parent.getObjectByName(`${base.tempNameTag}label_${idx}`);
-			editor.removeObject(labelModel, parent);
-		}
-		const lineModelNext = parent.getObjectByName(`${base.tempNameTag}line_${idx + 1}`);
-		if (!lineModelNext) {
-			const spotModel = parent.getObjectByName(`${base.tempNameTag}spot_${idx + 1}`);
-			if (spotModel) editor.removeObject(spotModel, parent);
+			if (labelModel) editor.removeObject(labelModel, parent);
 		}
 	}
 	function createLabel({ position = new THREE.Vector3(0, 0, 0), parent, content, name }) {

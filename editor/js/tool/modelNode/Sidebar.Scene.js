@@ -2,27 +2,58 @@ import { UIPanel, UIBreak } from "../../libs/ui.js";
 import { UIOutliner } from "../../libs/ui.three.js";
 
 function SidebarScene(editor) {
-	var signals = editor.signals;
+	this.editor = editor;
+	this.signals = editor.signals;
 	// var strings = editor.strings;
+	return this;
+}
 
-	var container = new UIPanel();
-	container.setBorderTop("0");
-	container.setPaddingTop("20px");
+SidebarScene.prototype = {
+	init() {
+		const _self = this;
+		_self.container = new UIPanel();
+		_self.container.setBorderTop("0");
+		_self.container.setPaddingTop("20px");
 
-	// outliner
+		// outliner
 
-	var nodeStates = new WeakMap();
+		_self.nodeStates = new WeakMap();
 
-	function buildOption(object, draggable) {
+		var ignoreObjectSelectedSignal = false;
+
+		_self.outliner = new UIOutliner(_self.editor);
+		_self.outliner.setId("outliner");
+		_self.outliner.onChange(function () {
+			ignoreObjectSelectedSignal = true;
+
+			_self.editor.selectById(parseInt(_self.outliner.getValue()));
+
+			ignoreObjectSelectedSignal = false;
+		});
+		_self.outliner.onDblClick(function () {
+			_self.editor.focusById(parseInt(_self.outliner.getValue()));
+		});
+		_self.container.add(_self.outliner);
+		_self.container.add(new UIBreak());
+
+		// _self.refreshUI();
+
+		_self.signals.sceneGraphChanged.addOnce(() => {
+			_self.refreshUI.call(_self);
+		});
+		return _self;
+	},
+	buildOption: function (object, draggable) {
+		const _self = this;
 		var option = document.createElement("div");
 		option.draggable = draggable;
-		option.innerHTML = buildHTML(object);
+		option.innerHTML = this.buildHTML(object);
 		option.value = object.id;
 
 		// opener
 
-		if (nodeStates.has(object)) {
-			var state = nodeStates.get(object);
+		if (this.nodeStates.has(object)) {
+			var state = this.nodeStates.get(object);
 
 			var opener = document.createElement("span");
 			opener.classList.add("opener");
@@ -34,8 +65,10 @@ function SidebarScene(editor) {
 			opener.addEventListener(
 				"click",
 				function () {
-					nodeStates.set(object, nodeStates.get(object) === false); // toggle
-					refreshUI();
+					debugger;
+					_self.nodeStates.set(object, _self.nodeStates.get(object) === false); // toggle
+					_self.refreshUI();
+					return false;
 				},
 				false
 			);
@@ -44,148 +77,74 @@ function SidebarScene(editor) {
 		}
 
 		return option;
-	}
-
-	function getMaterialName(material) {
-		if (Array.isArray(material)) {
-			var array = [];
-
-			for (var i = 0; i < material.length; i++) {
-				array.push(material[i].name);
-			}
-
-			return array.join(",");
-		}
-
-		return material.name;
-	}
-
-	function escapeHTML(html) {
+	},
+	escapeHTML(html) {
 		return html
 			.replace(/&/g, "&amp;")
 			.replace(/"/g, "&quot;")
 			.replace(/'/g, "&#39;")
 			.replace(/</g, "&lt;")
 			.replace(/>/g, "&gt;");
-	}
-
-	function getObjectType(object) {
+	},
+	getObjectType(object) {
 		if (object.isScene) return "Scene";
 		if (object.isCamera) return "Camera";
 		if (object.isLight) return "Light";
 		if (object.isMesh) return "Mesh";
 		if (object.isLine) return "Line";
 		if (object.isPoints) return "Points";
-
 		return "Object3D";
-	}
+	},
+	buildHTML(object) {
+		var html = `<span class="type ${this.getObjectType(object)}"></span> ${
+			object.text || this.escapeHTML(object.name) || object.type
+		}`;
 
-	function buildHTML(object) {
-		var html = `<span class="type ${getObjectType(object)}"></span> ${escapeHTML(object.name) || object.type}`;
-
-		// if (object.isMesh) {
-		// 	var geometry = object.geometry;
-		// 	var material = object.material;
-
-		// 	html += ` <span class="type Geometry"></span> ${escapeHTML(geometry.name) || geometry.type}`;
-		// 	html += ` <span class="type Material"></span> ${escapeHTML(getMaterialName(material))}`;
-		// }
-
-		html += getScript(object.uuid);
+		html += this.getScript(object.uuid);
 
 		return html;
-	}
-
-	function getScript(uuid) {
-		if (editor.scripts[uuid] !== undefined) {
+	},
+	getScript(uuid) {
+		if (this.editor.scripts[uuid] !== undefined) {
 			return ' <span class="type Script"></span>';
 		}
 		return "";
-	}
-
-	var ignoreObjectSelectedSignal = false;
-
-	var outliner = new UIOutliner(editor);
-	outliner.setId("outliner");
-	outliner.onChange(function () {
-		ignoreObjectSelectedSignal = true;
-
-		editor.selectById(parseInt(outliner.getValue()));
-
-		ignoreObjectSelectedSignal = false;
-	});
-	outliner.onDblClick(function () {
-		editor.focusById(parseInt(outliner.getValue()));
-	});
-	container.add(outliner);
-	container.add(new UIBreak());
-
-	function refreshUI() {
-		var camera = editor.camera;
-		var scene = editor.scene;
+	},
+	refreshUI() {
+		// 更新节点
+		const _self = this;
+		var camera = this.editor.camera;
+		var scene = this.editor.scene;
 
 		var options = [];
 
-		options.push(buildOption(camera, false));
-		options.push(buildOption(scene, false));
+		options.push(this.buildOption(camera, false));
+		options.push(this.buildOption(scene, false));
 
 		(function addObjects(objects, pad) {
 			for (var i = 0, l = objects.length; i < l; i++) {
 				var object = objects[i];
 				if (object.name.indexOf("temp_") !== -1) continue;
-				if (nodeStates.has(object) === false) {
-					nodeStates.set(object, false);
+				if (_self.nodeStates.has(object) === false) {
+					_self.nodeStates.set(object, false);
 				}
 
-				var option = buildOption(object, true);
+				var option = _self.buildOption(object, true);
 				option.style.paddingLeft = pad * 18 + "px";
 				options.push(option);
 
-				if (nodeStates.get(object) === true) {
+				if (_self.nodeStates.get(object) === true) {
 					addObjects(object.children, pad + 1);
 				}
 			}
 		})(scene.children, 0);
 
-		outliner.setOptions(options);
+		_self.outliner.setOptions(options);
 
-		if (editor.selected !== null) {
-			outliner.setValue(editor.selected.id);
+		if (_self.editor.selected !== null) {
+			_self.outliner.setValue(_self.editor.selected.id);
 		}
-	}
-	refreshUI();
+	},
+};
 
-	// events
-
-	// signals.editorCleared.add(refreshUI);
-
-	signals.sceneGraphChanged.addOnce(refreshUI);
-
-	// signals.objectSelected.add(function (object) {
-	// 	if (ignoreObjectSelectedSignal === true) return;
-
-	// 	if (object !== null) {
-	// 		let needsRefresh = false;
-	// 		let parent = object.parent;
-
-	// 		while (parent !== editor.scene) {
-	// 			if (nodeStates.get(parent) !== true) {
-	// 				nodeStates.set(parent, true);
-	// 				needsRefresh = true;
-	// 			}
-
-	// 			parent = parent.parent;
-	// 		}
-
-	// 		if (needsRefresh) refreshUI();
-
-	// 		outliner.setValue(object.id);
-	// 	} else {
-	// 		outliner.setValue(null);
-	// 	}
-	// });
-
-	return container;
-}
-
-export { SidebarScene };
+export default SidebarScene;

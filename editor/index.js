@@ -8,7 +8,8 @@ import { Resizer } from "./js/Resizer.js";
 // import { VRButton } from "examples/jsm/webxr/VRButton.js";
 
 import { Tool } from "./js/tool/index.js";
-import { loadModel } from "./js/tool/load.js";
+import Contextmenu from "./js/contextMenu/index.js"; // 右击菜单
+import { loadModel, $get } from "./js/tool/load.js";
 
 function Index() {
 	window.URL = window.URL || window.webkitURL;
@@ -28,8 +29,10 @@ function Index() {
 		labelRenderer: true,
 		transformControlsShow: false,
 		optionPanel: false,
-		infoShow: false,
-		axisHelperShow: false,
+		infoShow: false, // 左下角信息显示
+		axisHelperShow: false, //坐标辅助
+		gridShow: false, // 网格
+		stats: true, // 性能显示
 	};
 	const viewport = new Viewport(editor, config);
 	console.log(viewport);
@@ -44,6 +47,7 @@ function Index() {
 	const resizer = new Resizer(editor);
 	document.body.appendChild(resizer.dom);
 
+	const contextmenu = new Contextmenu(editor, viewport); // 右击菜单
 	const toolBar = new Tool(editor, viewport); // 底部工具栏
 
 	function onWindowResize() {
@@ -54,9 +58,10 @@ function Index() {
 
 	$(".toolbar").on("click", function (e) {
 		// $(".toolbar").removeClass("active");
-		$(this).addClass("active");
+		// if ($(this).hasClass("active")) return false;
+		// $(this).addClass("active");
 		const flag = this.getAttribute("data-flag");
-		tool(flag, e);
+		tool(flag, $(this));
 	});
 	function ranging(e) {
 		// 测距
@@ -72,39 +77,66 @@ function Index() {
 			$("#rangingTool").removeClass("active");
 		});
 	}
-	function tool(flag) {
-		const dom = document.getElementById("viewport");
-		dom.removeEventListener("click", ranging);
+	function tool(flag, dom) {
+		const viewportDom = document.getElementById("viewport");
+		viewportDom.removeEventListener("click", ranging);
 		switch (flag) {
+			case "0":
+				toolBar.cameraReset.reset();
+				break;
 			case "1":
 				// 测距
 				toolBar.modelNode.hide();
 				toolBar.modelDetail.hide();
 				$(".toolbar").removeClass("active");
-				$("#rangingTool").addClass("active");
-				dom.addEventListener("click", ranging);
+				dom.addClass("active");
+				viewportDom.addEventListener("click", ranging);
 				break;
 			case "2":
 				// 视角切换
+				if (dom.hasClass("active")) return false;
 				toolBar.modelNode.hide();
 				toolBar.modelDetail.hide();
 				$(".toolbar").removeClass("active");
-				$("#visualAngleTool").addClass("active");
+				dom.addClass("active");
 				const lockControl = new toolBar.LockControl(editor, viewport);
-				lockControl.start().unlockAfter = () => {
-					$("#visualAngleTool").removeClass("active");
+				// const trajector = editor.trajector;
+				const trajectorGroup = editor.scene.getChildByName("temp_trajector");
+				const trajector = [];
+				if (trajectorGroup) {
+					for (let i = 0; i < trajectorGroup.children.length; i++) {
+						const item = trajectorGroup.children[i];
+						if (item.constructor.name === "CSS2DObject") {
+							const point = new THREE.Vector3();
+							point.copy(item.position);
+							point.y += 1;
+							trajector.push(point);
+						}
+					}
+				}
+				lockControl.start({ trajector, speed: 1 }).unlockAfter = () => {
+					dom.removeClass("active");
 				};
 				break;
 			case "3":
 				// 模型节点
+				dom.addClass("active");
 				toolBar.modelNode.toggle().hideAfter = () => {
-					$("#nodeTool").removeClass("active");
+					dom.removeClass("active");
 				};
 				break;
 			case "4":
 				// 查看模型详情
+				dom.addClass("active");
 				toolBar.modelDetail.toggle().hideAfter = () => {
-					$("#detailTool").removeClass("active");
+					dom.removeClass("active");
+				};
+				break;
+			case "5":
+				// 轨迹
+				dom.addClass("active");
+				toolBar.trajector.start().endAfter = () => {
+					dom.removeClass("active");
 				};
 				break;
 			default:
@@ -112,7 +144,6 @@ function Index() {
 				break;
 		}
 	}
-	// loadModel({ path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json", format: "json" });
 	// loadModel({
 	// 	path: "../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/0a4e4806-c09a-416f-8065-4e1cbcf39bc6.gltf",
 	// }).then((res) => {
@@ -131,16 +162,16 @@ function Index() {
 	// 	const model = res.scenes[0];
 	// 	editor.addObject(model);
 	// });
-	// $.get("../models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json", function (res) {
-	// 	debugger;
-	// 	console.log(res);
-	// 	loadJson(res.children);
-	// });
-	loadModel({ path: "../models/gltf/0a4e4806-c09a-416f-8065-4e1cbcf39bc6.gltf" })
+	$get("/models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/gimJson.json").then((res) => {
+		console.log("gimJson", res);
+		toolBar.modelNode.refreshUI(res.children);
+	});
+	loadModel({ path: "../models/gltf/3d.gltf" })
 		.then((res) => {
 			const model = res.scenes[0];
 			debugger
 			editor.addObject(model);
+			toolBar.cameraReset.reset();
 		})
 		.catch((err) => {
 			debugger

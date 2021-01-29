@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "17911772",
+      "name": "icon_nav_camera_reset",
+      "font_class": "iconCameraReset",
+      "unicode": "e832",
+      "unicode_decimal": 59442
+    },
+    {
+      "icon_id": "18171089",
+      "name": "轨迹,线路，路径",
+      "font_class": "trajectory",
+      "unicode": "ea06",
+      "unicode_decimal": 59910
+    },
+    {
       "icon_id": "1304878",
       "name": "关闭",
       "font_class": "guanbi",

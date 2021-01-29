@@ -10,7 +10,7 @@
   bottom: 30px;
   background: rgba(0,0,0, 0.5);
   display: flex;
-  width: 250px;
+  /* width: 250px; */
   z-index: 2;
   left: 50%;
   transform: translateX(-50%);
