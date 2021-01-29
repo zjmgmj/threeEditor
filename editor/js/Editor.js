@@ -98,9 +98,9 @@ function Editor() {
 	this.scene = new THREE.Scene();
 
 	this.scene.add(new THREE.AmbientLight(0xffffff, 0.3)); // 环境光
-	const pointLight = new THREE.DirectionalLight(0xffffff, 1); // 平行光
-	pointLight.position.set(200, 200, 200);
-	this.scene.add(pointLight);
+	//const pointLight = new THREE.DirectionalLight(0xffffff, 1); // 平行光
+	//pointLight.position.set(200, 200, 200);
+	//this.scene.add(pointLight);
 
 	this.scene.name = "Scene";
 	this.sceneHelpers = new THREE.Scene();
