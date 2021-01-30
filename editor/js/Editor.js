@@ -456,7 +456,7 @@ Editor.prototype = {
 		if (object !== null) {
 			uuid = object.uuid;
 			if (object.material) {
-				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
+				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)", flatShading:true });
 				object.originalMaterial = object.material?.clone() || null;
 				object.material = material;
 			}
