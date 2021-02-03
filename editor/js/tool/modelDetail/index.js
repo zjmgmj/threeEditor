@@ -19,31 +19,6 @@ ModelDetail.prototype = {
 		container.dom.style = "transform: translateX(305px);";
 		this.container = container;
 		document.body.appendChild(this.container.dom);
-		// const tableContainer = new UIPanel();
-		this.editor.signals.objectSelected.add(function (object) {
-			console.log("object", object);
-			if (!_self.isShow) return false;
-			let temp = "";
-			$get("/models/420bd3c8-3bbd-486e-b39e-1d3193ef89ba/json/0a4e4806-c09a-416f-8065-4e1cbcf39bc6.json").then(
-				(res) => {
-					const resData = res.Value.paramsMap["其他参数"];
-					resData.map((item) => {
-						temp += `<div><div>${item.paramNameCn}</div><div>${item.paramValue}</div></div>`;
-					});
-					document.getElementById("modelDetail").innerHTML = temp;
-				}
-			);
-		});
-		return this;
-	},
-	panel: function () {
-		const _self = this;
-		const container = new UIPanel();
-		container.setClass("model-detail");
-		container.setId("modelDetail");
-		container.dom.style = "transform: translateX(305px);";
-		this.container = container;
-		document.body.appendChild(this.container.dom);
 		this.editor.signals.objectSelected.add(function (object) {
 			console.log("object", object);
 			if (!_self.isShow) return false;

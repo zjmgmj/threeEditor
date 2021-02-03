@@ -14,7 +14,7 @@ import { SetRotationCommand } from "./commands/SetRotationCommand.js";
 import { SetScaleCommand } from "./commands/SetScaleCommand.js";
 import { Toolbar } from "./Toolbar.js"; // 左上角的 移动旋转按钮面板
 import { CSS2DRenderer } from "../libs/jsm/renderers/CSS2DRenderer.js";
-import { SceneUtils } from "../libs/jsm/utils/SceneUtils.js";
+// import { SceneUtils } from "../libs/jsm/utils/SceneUtils.js";
 function Viewport(
 	editor,
 	config = {
@@ -657,13 +657,15 @@ function Viewport(
 	// animations
 
 	var clock = new THREE.Clock(); // only used for animations
-
+	let timeStamp = 0;
+	const FPS = 60; // 指的是 30帧每秒的情况
+	const singleFrameTime = 1 / FPS;
 	this.animate = function () {
 		requestAnimationFrame(_self.animate);
 		stats.begin();
 		var mixer = editor.mixer;
 		var delta = clock.getDelta();
-
+		timeStamp += delta;
 		var needsUpdate = false;
 
 		if (mixer.stats.actions.inUse > 0) {
@@ -675,7 +677,12 @@ function Viewport(
 			viewHelper.update(delta);
 			needsUpdate = true;
 		}
-		if (needsUpdate === true) render();
+		if (needsUpdate === true && timeStamp > singleFrameTime) {
+			// 剩余的时间合并进入下次的判断计算 这里使用取余数是因为 当页页面失去焦点又重新获得焦点的时候，delta数值会非常大， 这个时候就需要
+			timeStamp = timeStamp % singleFrameTime;
+			render();
+		}
+		// if (needsUpdate === true) render();
 		stats.end();
 	};
 	requestAnimationFrame(_self.animate);
