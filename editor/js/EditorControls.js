@@ -55,6 +55,7 @@ function EditorControls(object, domElement) {
 	};
 
 	this.pan = function (delta) {
+		console.log("-----------------delta", delta);
 		var distance = object.position.distanceTo(center);
 
 		delta.multiplyScalar(distance * scope.panSpeed);
@@ -154,7 +155,7 @@ function EditorControls(object, domElement) {
 			state = STATE.PAN;
 		} else if (event.button === 2) {
 			// 右键
-			// state = STATE.PAN;
+			state = STATE.PAN;
 			return false;
 		}
 
@@ -172,6 +173,7 @@ function EditorControls(object, domElement) {
 		} else if (state === STATE.ZOOM) {
 			scope.zoom(delta.set(0, 0, movementY));
 		} else if (state === STATE.PAN) {
+			console.log("------------------onMouseMove--pan");
 			scope.pan(delta.set(-movementX, movementY, 0));
 		}
 
@@ -273,7 +275,7 @@ function EditorControls(object, domElement) {
 				var offset1 = touches[1].clone().sub(getClosest(touches[1], prevTouches));
 				offset0.x = -offset0.x;
 				offset1.x = -offset1.x;
-
+				console.log("-----------touchMove---pan");
 				scope.pan(offset0.add(offset1));
 
 				break;

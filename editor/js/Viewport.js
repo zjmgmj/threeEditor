@@ -14,7 +14,7 @@ import { SetRotationCommand } from "./commands/SetRotationCommand.js";
 import { SetScaleCommand } from "./commands/SetScaleCommand.js";
 import { Toolbar } from "./Toolbar.js"; // 左上角的 移动旋转按钮面板
 import { CSS2DRenderer } from "../libs/jsm/renderers/CSS2DRenderer.js";
-import { SceneUtils } from "../libs/jsm/utils/SceneUtils.js";
+// import { SceneUtils } from "../libs/jsm/utils/SceneUtils.js";
 function Viewport(
 	editor,
 	config = {

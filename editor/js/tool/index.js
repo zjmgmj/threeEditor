@@ -2,7 +2,6 @@ import Ranging from "./ranging.js";
 import Draw from "./draw.js";
 import base from "./base.js";
 import LockControl from "./lockControl.js";
-// import Contextmenu from "./contextMenu/index.js";
 import ModelNode from "./modelNode/index.js";
 import ModelDetail from "./modelDetail/index.js";
 import Trajector from "./trajector/index.js";

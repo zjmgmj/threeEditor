@@ -10,6 +10,7 @@ import { Resizer } from "./js/Resizer.js";
 import { Tool } from "./js/tool/index.js";
 import Contextmenu from "./js/contextMenu/index.js"; // 右击菜单
 import { loadModel, $get } from "./js/tool/load.js";
+import SkyBox from "./js/tool/sky.js";
 
 function Index() {
 	window.URL = window.URL || window.webkitURL;
@@ -47,7 +48,7 @@ function Index() {
 	const resizer = new Resizer(editor);
 	document.body.appendChild(resizer.dom);
 
-	const contextmenu = new Contextmenu(editor, viewport); // 右击菜单
+	// const contextmenu = new Contextmenu(editor, viewport); // 右击菜单
 	const toolBar = new Tool(editor, viewport); // 底部工具栏
 
 	function onWindowResize() {
@@ -56,6 +57,8 @@ function Index() {
 	window.addEventListener("resize", onWindowResize, false);
 	onWindowResize();
 
+	const skyBox = new SkyBox(editor);
+	skyBox.show({ size: 8000 });
 	$(".toolbar").on("click", function (e) {
 		// $(".toolbar").removeClass("active");
 		// if ($(this).hasClass("active")) return false;
