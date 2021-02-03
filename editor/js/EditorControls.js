@@ -55,7 +55,6 @@ function EditorControls(object, domElement) {
 	};
 
 	this.pan = function (delta) {
-		console.log("-----------------delta", delta);
 		var distance = object.position.distanceTo(center);
 
 		delta.multiplyScalar(distance * scope.panSpeed);
@@ -107,6 +106,7 @@ function EditorControls(object, domElement) {
 
 		switch (event.pointerType) {
 			case "mouse":
+			case "pen":
 				onMouseDown(event);
 				break;
 
@@ -122,6 +122,7 @@ function EditorControls(object, domElement) {
 
 		switch (event.pointerType) {
 			case "mouse":
+			case "pen":
 				onMouseMove(event);
 				break;
 
@@ -132,6 +133,7 @@ function EditorControls(object, domElement) {
 	function onPointerUp(event) {
 		switch (event.pointerType) {
 			case "mouse":
+			case "pen":
 				onMouseUp();
 				break;
 
@@ -145,18 +147,13 @@ function EditorControls(object, domElement) {
 	// mouse
 
 	function onMouseDown(event) {
-		console.log("button", event.button);
 		if (event.button === 0) {
-			// 左键
 			state = STATE.ROTATE;
 		} else if (event.button === 1) {
-			// 中键
-			state = STATE.ZOOM;
-			//state = STATE.PAN;
-		} else if (event.button === 2) {
-			// 右键
+			// state = STATE.ZOOM;
 			state = STATE.PAN;
-			return false;
+		} else if (event.button === 2) {
+			state = STATE.PAN;
 		}
 
 		pointerOld.set(event.clientX, event.clientY);
@@ -173,7 +170,6 @@ function EditorControls(object, domElement) {
 		} else if (state === STATE.ZOOM) {
 			scope.zoom(delta.set(0, 0, movementY));
 		} else if (state === STATE.PAN) {
-			console.log("------------------onMouseMove--pan");
 			scope.pan(delta.set(-movementX, movementY, 0));
 		}
 
@@ -275,7 +271,7 @@ function EditorControls(object, domElement) {
 				var offset1 = touches[1].clone().sub(getClosest(touches[1], prevTouches));
 				offset0.x = -offset0.x;
 				offset1.x = -offset1.x;
-				console.log("-----------touchMove---pan");
+
 				scope.pan(offset0.add(offset1));
 
 				break;
