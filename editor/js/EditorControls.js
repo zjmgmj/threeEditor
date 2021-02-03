@@ -118,7 +118,7 @@ function EditorControls(object, domElement) {
 
 	function onPointerMove(event) {
 		if (scope.enabled === false) return;
-
+		console.log(event);
 		switch (event.pointerType) {
 			case "mouse":
 				onMouseMove(event);
@@ -170,6 +170,7 @@ function EditorControls(object, domElement) {
 		if (state === STATE.ROTATE) {
 			scope.rotate(delta.set(-movementX, -movementY, 0));
 		} else if (state === STATE.ZOOM) {
+			
 			scope.zoom(delta.set(0, 0, movementY));
 		} else if (state === STATE.PAN) {
 			scope.pan(delta.set(-movementX, movementY, 0));

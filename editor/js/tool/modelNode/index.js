@@ -73,7 +73,7 @@ ModelNode.prototype = {
 		this.isShow ? this.hide() : this.show();
 		return this;
 	},
-	hideAfter() { },
+	hideAfter() {},
 };
 
 export default ModelNode;

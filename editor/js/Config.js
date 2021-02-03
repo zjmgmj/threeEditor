@@ -5,7 +5,7 @@ function Config() {
 		language: "zh",
 		exportPrecision: 6,
 		isHelper: false,
-		autosave: true,
+		autosave: false,
 
 		"project/title": "",
 		"project/editable": false,
