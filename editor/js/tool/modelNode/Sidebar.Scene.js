@@ -97,7 +97,7 @@ SidebarScene.prototype = {
 	},
 	buildHTML(object) {
 		var html = `<span class="type ${this.getObjectType(object)}"></span> ${
-			object.text || this.escapeHTML(object.name) || object.type
+			object.text || this.escapeHTML(object.Name) || this.escapeHTML(object.name) || object.type
 		}`;
 
 		html += this.getScript(object.uuid);

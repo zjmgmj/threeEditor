@@ -4,6 +4,7 @@ function ModelNode(editor) {
 	const _self = this;
 	_self.editor = editor;
 	_self.isShow = false;
+	_self.propertyName = "id";
 	_self.sidebarScene = new SidebarScene(editor);
 	_self.sidebarScene.__proto__.refreshUI = function (list) {
 		if (!list && !_self.domList) return false;
@@ -13,20 +14,24 @@ function ModelNode(editor) {
 		(function addObjects(list, pad) {
 			for (var i = 0, l = list.length; i < l; i++) {
 				var object = list[i];
-				const model = _self.editor.scene.getObjectById(object.id);
+				const model = _self.editor.scene.getObjectByName(object[_self.propertyName]);
 				object.uuid = model?.uuid;
 				// if (object.name.indexOf("temp_") !== -1) continue;
-				if (_self.sidebarScene.nodeStates.has(object) === false) {
-					_self.sidebarScene.nodeStates.set(object, false);
-				}
+				//if (_self.sidebarScene.nodeStates.has(object) === false) {
+				//	_self.sidebarScene.nodeStates.set(object, false);
+				//}
 
 				var option = _self.sidebarScene.buildOption(object, true);
 				option.style.paddingLeft = pad * 18 + "px";
 				options.push(option);
 
-				if (_self.sidebarScene.nodeStates.get(object) === true) {
+				if (object.children) {
 					addObjects(object.children, pad + 1);
 				}
+
+				//if (_self.sidebarScene.nodeStates.get(object) === true) {
+				//	addObjects(object.children, pad + 1);
+				//}
 			}
 		})(domList, 0);
 		_self.sidebarScene.outliner.setOptions(options);
@@ -46,8 +51,11 @@ ModelNode.prototype = {
 		_self.sidebarScene.init();
 		container.add(_self.sidebarScene.container);
 		document.body.appendChild(container.dom);
+		_self.container = container;
 	},
-	refreshUI(data) {
+	refreshUI(data, propertyName) {
+		if (propertyName)
+			this.propertyName = propertyName;
 		this.sidebarScene.refreshUI(data);
 	},
 	show() {
@@ -65,7 +73,7 @@ ModelNode.prototype = {
 		this.isShow ? this.hide() : this.show();
 		return this;
 	},
-	hideAfter() {},
+	hideAfter() { },
 };
 
 export default ModelNode;

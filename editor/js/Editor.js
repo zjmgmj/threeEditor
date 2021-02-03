@@ -97,10 +97,13 @@ function Editor() {
 
 	this.scene = new THREE.Scene();
 
-	this.scene.add(new THREE.AmbientLight(0xffffff, 0.3)); // 环境光
-	const pointLight = new THREE.DirectionalLight(0xffffff, 1); // 平行光
-	pointLight.position.set(200, 200, 200);
-	this.scene.add(pointLight);
+	this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+	this.scene.add(this.ambientLight); // 环境光
+
+	var _pointLight = new THREE.DirectionalLight(0xffffff, 0.5); // 平行光
+	_pointLight.position.set(500, 500, 500);
+	this.scene.add(_pointLight);
+	this.pointLight = _pointLight;
 
 	this.scene.name = "Scene";
 	this.sceneHelpers = new THREE.Scene();
@@ -453,7 +456,7 @@ Editor.prototype = {
 		if (object !== null) {
 			uuid = object.uuid;
 			if (object.material) {
-				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)" });
+				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)", flatShading:true });
 				object.originalMaterial = object.material?.clone() || null;
 				object.material = material;
 			}
