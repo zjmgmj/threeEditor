@@ -61,7 +61,7 @@ function Contextmenu(editor, viewport) {
 		const domList = container.dom.children;
 		for (let i = 0; i < domList.length; i++) {
 			const el = domList[i];
-			if (!editor.selected) {
+			if (!editor.selected && !editor.selectedList.length) {
 				if (el.textContent !== "显示所有对象") el.style.display = "none";
 			} else {
 				el.style.display = "block";

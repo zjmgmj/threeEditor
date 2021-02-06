@@ -8,8 +8,7 @@ function Label(editor, callback = () => {}) {
 	container.setClass("title");
 	container.setTextContent("标注");
 	container.onClick(clickEvent);
-	function clickEvent() {
-		const model = editor.selected;
+	function createDom(model) {
 		const dom = document.createElement("div");
 		dom.className = "comment-box";
 		const num = Math.random() * 1000;
@@ -51,6 +50,16 @@ function Label(editor, callback = () => {}) {
 		document.getElementById(closeId).addEventListener("click", function () {
 			Base.removeLabel({ name: labelName, parent: model });
 		});
+	}
+	function clickEvent() {
+		const model = editor.selected || editor.selectedList;
+		if (model.constructor.name === "Array") {
+			for (let i = 0; i < model.length; i++) {
+				createDom(model[i]);
+			}
+		} else {
+			createDom(model);
+		}
 		callback();
 	}
 	return { container, clickEvent };

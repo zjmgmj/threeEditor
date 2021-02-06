@@ -503,29 +503,6 @@ Editor.prototype = {
 		this.signals.viewportCameraChanged.dispatch();
 	},
 
-	//
-
-	select: function (object) {
-		if (!object) return;
-
-		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial?.clone();
-		if (this.selected === object) return;
-
-		var uuid = null;
-
-		uuid = object.uuid;
-		if (object.material) {
-			const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)", flatShading: true });
-			object.originalMaterial = object.material?.clone() || null;
-			object.material = material;
-		}
-
-		this.selected = object;
-
-		this.config.setKey("selected", uuid);
-		this.signals.objectSelected.dispatch(object);
-	},
-
 	selectById: function (id) {
 		if (id === this.camera.id) {
 			this.select(this.camera);

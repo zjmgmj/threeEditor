@@ -6,14 +6,23 @@ function Hide(editor, callback = () => {}) {
 	container.setClass("title");
 	container.setTextContent("隐藏选定项");
 	container.onClick(clickEvent);
-	function clickEvent() {
-		console.log("-----------隐藏");
-		const model = editor.selected;
+	function hideModel(model) {
 		editor.hideModels.push({
-			parentId: model.parent?.id,
+			parentId: model.parent ? model.parent.id : null,
 			model,
 		});
 		editor.removeObject(model);
+	}
+	function clickEvent() {
+		console.log("-----------隐藏");
+		const model = editor.selected || editor.selectedList;
+		if (model.constructor.name === "Array") {
+			for (let i = 0; i < model.length; i++) {
+				hideModel(model[i]);
+			}
+		} else {
+			hideModel(model);
+		}
 		editor.deselect();
 		callback();
 	}
