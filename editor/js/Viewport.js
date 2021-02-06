@@ -427,6 +427,12 @@ function Viewport(
 		render();
 	});
 
+	signals.objectListSelected.add(function (object) {
+		// 模型选择
+		console.log("---------object", object);
+		render();
+	});
+
 	signals.objectFocused.add(function (object) {
 		console.log("focused", object);
 		controls.focus(object);

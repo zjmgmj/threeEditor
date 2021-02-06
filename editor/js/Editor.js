@@ -84,6 +84,8 @@ function Editor() {
 		viewportCameraChanged: new Signal(),
 
 		animationStopped: new Signal(),
+
+		objectListSelected: new Signal(),
 	};
 
 	this.config = new Config();
@@ -119,6 +121,7 @@ function Editor() {
 	this.mixer = new THREE.AnimationMixer(this.scene);
 
 	this.selected = null;
+	this.selectedList = [];
 	this.helpers = {};
 
 	this.cameras = {};
@@ -447,25 +450,70 @@ Editor.prototype = {
 	},
 
 	//
-
-	select: function (object) {
-		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial?.clone();
-		if (this.selected === object) return;
-
-		var uuid = null;
-		if (object !== null) {
-			uuid = object.uuid;
-			if (object.material) {
-				const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)", flatShading:true });
-				object.originalMaterial = object.material?.clone() || null;
-				object.material = material;
+	clearSelects: function () {
+		const that = this;
+		const selecteds = this.selectedList;
+		if (selecteds.length === 0) return false;
+		for (let i = 0; i < selecteds.length; i++) {
+			that.clearSelect(selecteds[i]);
+		}
+		this.selectedList = [];
+	},
+	clearSelect: function (object) {
+		const model = object || this.selected;
+		if (!model) return false;
+		model.traverse(function (child) {
+			if (child.isMesh) {
+				child.material = child.originalMaterial?.clone();
+				child.originalMaterial = null;
 			}
+		});
+	},
+
+	select: function (models) {
+		this.clearSelect();
+		this.clearSelects();
+		this.selected = null;
+		this.config.setKey("selected", null);
+		this.signals.objectSelected.dispatch(null);
+		if (!models) return false;
+		const isMultiple = models.constructor.name === "Array";
+		var uuid = null;
+		if (!isMultiple) {
+			// this.clearSelect();
+			// this.clearSelects();
+			if (this.selected === models) return;
+			const object = upDateState(models);
+			this.selected = object;
+
+			this.config.setKey("selected", uuid);
+			this.signals.objectSelected.dispatch(object);
+		} else {
+			const modelList = [];
+			for (let i = 0; i < models.length; i++) {
+				const obj = upDateState(models[i]);
+				modelList.push(obj);
+			}
+			this.selectedList = modelList;
+			this.signals.objectListSelected.dispatch();
 		}
 
-		this.selected = object;
-
-		this.config.setKey("selected", uuid);
-		this.signals.objectSelected.dispatch(object);
+		function upDateState(object) {
+			if (object !== null) {
+				uuid = object.uuid;
+				object.traverse(function (child) {
+					if (child.isMesh) {
+						const material = new THREE.MeshStandardMaterial({
+							color: "rgba(78,108,165, 0.7)",
+							flatShading: true,
+						});
+						child.originalMaterial = child.material?.clone() || null;
+						child.material = material;
+					}
+				});
+			}
+			return object;
+		}
 	},
 
 	selectById: function (id) {

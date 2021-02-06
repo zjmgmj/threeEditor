@@ -25,9 +25,8 @@ SidebarScene.prototype = {
 		_self.outliner.setId("outliner");
 		_self.outliner.onChange(function () {
 			ignoreObjectSelectedSignal = true;
-
-			_self.editor.selectById(parseInt(_self.outliner.getValue()));
-
+			const models = _self.getSelectModel(_self.outliner.getValue());
+			_self.editor.select(models);
 			ignoreObjectSelectedSignal = false;
 		});
 		_self.outliner.onDblClick(function () {
@@ -43,13 +42,28 @@ SidebarScene.prototype = {
 		});
 		return _self;
 	},
+	getSelectModel(obj) {
+		const models = [];
+		if (obj.children) {
+			const list = obj.children;
+			for (let i = 0; i < list.length; i++) {
+				const item = list[i];
+				models.push(...this.getSelectModel(item));
+			}
+		} else {
+			const model = this.editor.scene.getChildByName(obj.gimCode);
+			if (model) models.push(model);
+		}
+		return models;
+	},
 	buildOption: function (object, draggable) {
 		const _self = this;
 		var option = document.createElement("div");
 		option.draggable = draggable;
 		option.innerHTML = this.buildHTML(object);
-		option.value = object.id;
-
+		// option.value = object.id;
+		// option.value = object.gimCode;
+		option.value = object;
 		// opener
 
 		if (this.nodeStates.has(object)) {
@@ -65,7 +79,6 @@ SidebarScene.prototype = {
 			opener.addEventListener(
 				"click",
 				function () {
-					debugger;
 					_self.nodeStates.set(object, _self.nodeStates.get(object) === false); // toggle
 					_self.refreshUI();
 					return false;
