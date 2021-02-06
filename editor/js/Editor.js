@@ -422,33 +422,7 @@ Editor.prototype = {
 		if (index !== -1) {
 			this.scripts[object.uuid].splice(index, 1);
 		}
-
-		this.signals.scriptRemoved.dispatch(script);
 	},
-
-	getObjectMaterial: function (object, slot) {
-		var material = object.material;
-
-		if (Array.isArray(material) && slot !== undefined) {
-			material = material[slot];
-		}
-
-		return material;
-	},
-
-	setObjectMaterial: function (object, slot, newMaterial) {
-		if (Array.isArray(object.material) && slot !== undefined) {
-			object.material[slot] = newMaterial;
-		} else {
-			object.material = newMaterial;
-		}
-	},
-
-	setViewportCamera: function (uuid) {
-		this.viewportCamera = this.cameras[uuid];
-		this.signals.viewportCameraChanged.dispatch();
-	},
-
 	//
 	clearSelects: function () {
 		const that = this;
@@ -514,6 +488,42 @@ Editor.prototype = {
 			}
 			return object;
 		}
+	},
+
+	setObjectMaterial: function (object, slot, newMaterial) {
+		if (Array.isArray(object.material) && slot !== undefined) {
+			object.material[slot] = newMaterial;
+		} else {
+			object.material = newMaterial;
+		}
+	},
+
+	setViewportCamera: function (uuid) {
+		this.viewportCamera = this.cameras[uuid];
+		this.signals.viewportCameraChanged.dispatch();
+	},
+
+	//
+
+	select: function (object) {
+		if (!object) return;
+
+		if (this.selected && this.selected !== object) this.selected.material = this.selected.originalMaterial?.clone();
+		if (this.selected === object) return;
+
+		var uuid = null;
+
+		uuid = object.uuid;
+		if (object.material) {
+			const material = new THREE.MeshStandardMaterial({ color: "rgba(78,108,165, 0.7)", flatShading: true });
+			object.originalMaterial = object.material?.clone() || null;
+			object.material = material;
+		}
+
+		this.selected = object;
+
+		this.config.setKey("selected", uuid);
+		this.signals.objectSelected.dispatch(object);
 	},
 
 	selectById: function (id) {

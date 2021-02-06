@@ -13,50 +13,50 @@ import { loadModel, $get } from "./js/tool/load.js";
 import SkyBox from "./js/tool/sky.js";
 
 function Index() {
-	window.URL = window.URL || window.webkitURL;
-	window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+    window.URL = window.URL || window.webkitURL;
+    window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
-	Number.prototype.format = function () {
-		return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-	};
+    Number.prototype.format = function () {
+        return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    };
 
-	var editor = new Editor();
+    var editor = new Editor();
 
-	window.editor = editor; // Expose editor to Console
-	window.THREE = THREE; // Expose THREE to APP Scripts and Console
-	window.loadModel = loadModel;
+    window.editor = editor; // Expose editor to Console
+    window.THREE = THREE; // Expose THREE to APP Scripts and Console
+    window.loadModel = loadModel;
 
-	const config = {
-		sidebar: false,
-		labelRenderer: true,
-		transformControlsShow: false,
-		optionPanel: false,
-		infoShow: false, // 左下角信息显示
-		axisHelperShow: false, //坐标辅助
-		gridShow: false, // 网格
-		stats: true, // 性能显示
-	};
-	const viewport = new Viewport(editor, config);
-	console.log(viewport);
-	document.body.appendChild(viewport.container.dom);
+    const config = {
+        sidebar: false,
+        labelRenderer: true,
+        transformControlsShow: false,
+        optionPanel: false,
+        infoShow: false, // 左下角信息显示
+        axisHelperShow: false, //坐标辅助
+        gridShow: false, // 网格
+        stats: false, // 性能显示
+    };
+    const viewport = new Viewport(editor, config);
+    console.log(viewport);
+    document.body.appendChild(viewport.container.dom);
 
-	const sidebarProject = new SidebarProject(editor);
-	console.log("sidebarProject", sidebarProject);
+    const sidebarProject = new SidebarProject(editor);
+    console.log("sidebarProject", sidebarProject);
 
-	// const menubar = new Menubar(editor); // 顶部菜单
-	// document.body.appendChild(menubar.dom);
+    // const menubar = new Menubar(editor); // 顶部菜单
+    // document.body.appendChild(menubar.dom);
 
-	const resizer = new Resizer(editor);
-	document.body.appendChild(resizer.dom);
+    const resizer = new Resizer(editor);
+    document.body.appendChild(resizer.dom);
 
 	const contextmenu = new Contextmenu(editor, viewport); // 右击菜单
 	const toolBar = (window.toolBar = new Tool(editor, viewport)); // 底部工具栏
 
-	function onWindowResize() {
-		editor.signals.windowResize.dispatch();
-	}
-	window.addEventListener("resize", onWindowResize, false);
-	onWindowResize();
+    function onWindowResize() {
+        editor.signals.windowResize.dispatch();
+    }
+    window.addEventListener("resize", onWindowResize, false);
+    onWindowResize();
 
 	const skyBox = new SkyBox(editor);
 	skyBox.show({ size: 8000 });
